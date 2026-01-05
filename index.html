@@ -16,9 +16,34 @@ async function loadComponent(type) {
     if(type === 'gas') url = 'https://kfruti88.github.io/Clay-County-Fuel/index.html';
     if(type === 'news') url = 'https://kfruti88.github.io/clay-county-news/index.html';
     
-    // It "fetches" the code from your other repo and puts it in the locked frame
-    const response = await fetch(url);
-    const html = await response.text();
-    contentDiv.innerHTML = html;
+  async function loadComponent(type) {
+    const contentDiv = document.getElementById('content-area');
+    let url = "";
+
+    // Map your types to the EXACT live URLs of your other projects
+    if (type === 'gas' || type === 'fuel') {
+        url = 'https://kfruti88.github.io/Clay-County-Fuel/index.html';
+    } else if (type === 'news') {
+        url = 'https://kfruti88.github.io/clay-county-news/index.html';
+    } else if (type === 'events') {
+        url = 'https://kfruti88.github.io/Clay-County-All/Calendar/Index.html';
+    }
+
+    try {
+        const response = await fetch(url);
+        if (!response.ok) throw new Error('Network response was not ok');
+        const html = await response.text();
+        
+        // This drops the code into your 'locked' frame
+        contentDiv.innerHTML = html;
+        
+        // Re-run any scripts found in the fetched HTML
+        const scripts = contentDiv.getElementsByTagName('script');
+        for (let script of scripts) {
+            eval(script.innerText);
+        }
+    } catch (error) {
+        contentDiv.innerHTML = "<p>Error loading content: " + error.message + "</p>";
+    }
 }
 </script>
