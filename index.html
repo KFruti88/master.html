@@ -1,1 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clay County Master Portal</title>
+    <style>
+        /* --- 1. GLOBAL LAYOUT (Locked) --- */
+        body { margin: 0; padding: 0; background: #121212; color: white; font-family: 'Inter', sans-serif; overflow-x: hidden; }
+        .my-perfect-layout { display: flex; flex-direction: column; min-height: 100vh; width: 100%; }
+        header { background: #1f1f1f; padding: 20px; text-align: center; border-bottom: 3px solid #00ff00; }
+        footer { text-align: center; padding: 20px; color: #444; font-size: 0.8rem; margin-top: auto; }
 
+        /* --- 2. FLEXIBLE FLOW (No Overlapping) --- */
+        #content-area { flex: 1; width: 100%; padding: 20px; box-sizing: border-box; position: relative; }
+        #content-area > * { position: relative !important; display: block !important; width: 100% !important; margin-bottom: 20px; clear: both; }
+
+        /* --- 3. RESPONSIVE RULES --- */
+        @media (max-width: 980px) { header h1 { font-size: 1.2rem; } #content-area { padding: 10px; } }
+        @media (min-width: 1600px) { #content-area { max-width: 1440px; margin: 0 auto; } }
+    </style>
+</head>
+<body>
+
+<div class="my-perfect-layout">
+    <header><h1>Clay County Portal</h1></header>
+    <div id="content-area"></div>
+    <footer>© 2026 Clay County</footer>
+</div>
+
+<script>
+async function loadMasterContent() {
+    const contentDiv = document.getElementById('content-area');
+    const urlParams = new URLSearchParams(window.location.search);
+    const label = urlParams.get('type') || 'default'; 
+
+    try {
+        // 1. Fetch your central "Address Book"
+        const configRes = await fetch('https://kfruti88.github.io/clay-county-news/config.json');
+        if (!configRes.ok) throw new Error("Could not load config.json. Check the file name.");
+        
+        const config = await configRes.json();
+        const targetUrl = config[label];
+
+        if (!targetUrl) throw new Error("Label '" + label + "' not found in config.json");
+
+        // 2. Fetch the actual content page
+        const response = await fetch(targetUrl);
+        if (!response.ok) throw new Error("Target file not found at: " + targetUrl);
+        
+        const html = await response.text();
+        contentDiv.innerHTML = html;
+        
+        // 3. RE-RUN SCRIPTS (Critical for Gas/News logic)
+        const scripts = contentDiv.getElementsByTagName('script');
+        for (let script of scripts) {
+            const s = document.createElement("script");
+            if (script.src) { s.src = script.src; } 
+            else { s.textContent = script.textContent; }
+            document.body.appendChild(s);
+        }
+    } catch (e) {
+        contentDiv.innerHTML = `<div style="color:#ff4444; text-align:center; padding:40px; border:1px solid #333;">
+            <strong>System Error:</strong> ${e.message}<br><br>
+            <small>Check your config.json file and Divi CSS Class.</small>
+        </div>`;
+    }
+}
+loadMasterContent();
+</script>
+</body>
+</html>
