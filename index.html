@@ -8,25 +8,20 @@
 </div>
 
 <script>
-// This script acts as your "Key" to unlock different content
 async function loadComponent(type) {
     const contentDiv = document.getElementById('content-area');
     let url = "";
 
-    if(type === 'gas') url = 'https://kfruti88.github.io/Clay-County-Fuel/index.html';
-    if(type === 'news') url = 'https://kfruti88.github.io/clay-county-news/index.html';
-    
-  async function loadComponent(type) {
-    const contentDiv = document.getElementById('content-area');
-    let url = "";
-
-    // Map your types to the EXACT live URLs of your other projects
+    // 1. Map your types to the EXACT live URLs
     if (type === 'gas' || type === 'fuel') {
         url = 'https://kfruti88.github.io/Clay-County-Fuel/index.html';
     } else if (type === 'news') {
         url = 'https://kfruti88.github.io/clay-county-news/index.html';
-    } else if (type === 'events') {
+    } else if (type === 'events' || type === 'calendar') {
         url = 'https://kfruti88.github.io/Clay-County-All/Calendar/Index.html';
+    } else {
+        // Default fallback if no type is found
+        url = 'https://kfruti88.github.io/clay-county-news/index.html';
     }
 
     try {
@@ -37,13 +32,24 @@ async function loadComponent(type) {
         // This drops the code into your 'locked' frame
         contentDiv.innerHTML = html;
         
-        // Re-run any scripts found in the fetched HTML
+        // 2. CRITICAL: Re-run scripts so the Fuel/News logic actually works
         const scripts = contentDiv.getElementsByTagName('script');
         for (let script of scripts) {
-            eval(script.innerText);
+            const newScript = document.createElement("script");
+            if (script.src) {
+                newScript.src = script.src;
+            } else {
+                newScript.textContent = script.textContent;
+            }
+            document.body.appendChild(newScript);
         }
     } catch (error) {
-        contentDiv.innerHTML = "<p>Error loading content: " + error.message + "</p>";
+        contentDiv.innerHTML = "<p style='color:red;'>Error loading content: " + error.message + "</p>";
     }
 }
+
+// 3. THE TRIGGER: This looks at the ?type= parameter in the URL
+const urlParams = new URLSearchParams(window.location.search);
+const currentType = urlParams.get('type') || 'news'; 
+loadComponent(currentType);
 </script>
