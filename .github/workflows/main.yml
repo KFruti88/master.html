@@ -1,1 +1,32 @@
+name: Master Portal Sync
 
+on:
+  push:
+    branches: ["main"]
+  schedule:
+    - cron: '3 * * * *'  # Runs at :03 every hour
+    - cron: '33 * * * *' # Runs at :33 every hour
+  workflow_dispatch:
+
+# --- ADD THIS SECTION BELOW ---
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+# ------------------------------
+
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Upload Site Files
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
