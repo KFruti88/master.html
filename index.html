@@ -1,0 +1,24 @@
+<div class="my-perfect-layout">
+    <header><h1>Clay County Portal</h1></header>
+    
+    <div id="content-area">
+        </div>
+
+    <footer>© 2024 Clay County</footer>
+</div>
+
+<script>
+// This script acts as your "Key" to unlock different content
+async function loadComponent(type) {
+    const contentDiv = document.getElementById('content-area');
+    let url = "";
+
+    if(type === 'gas') url = 'https://kfruti88.github.io/Clay-County-Fuel/index.html';
+    if(type === 'news') url = 'https://kfruti88.github.io/clay-county-news/index.html';
+    
+    // It "fetches" the code from your other repo and puts it in the locked frame
+    const response = await fetch(url);
+    const html = await response.text();
+    contentDiv.innerHTML = html;
+}
+</script>
