@@ -1,1 +1,55 @@
+<div class="my-perfect-layout">
+    <header><h1>Clay County Portal</h1></header>
+    
+    <div id="content-area">
+        </div>
 
+    <footer>© 2024 Clay County</footer>
+</div>
+
+<script>
+async function loadComponent(type) {
+    const contentDiv = document.getElementById('content-area');
+    let url = "";
+
+    // 1. Map your types to the EXACT live URLs
+    if (type === 'gas' || type === 'fuel') {
+        url = 'https://kfruti88.github.io/Clay-County-Fuel/index.html';
+    } else if (type === 'news') {
+        url = 'https://kfruti88.github.io/clay-county-news/index.html';
+    } else if (type === 'events' || type === 'calendar') {
+        url = 'https://kfruti88.github.io/Clay-County-All/Calendar/Index.html';
+    } else {
+        // Default fallback if no type is found
+        url = 'https://kfruti88.github.io/clay-county-news/index.html';
+    }
+
+    try {
+        const response = await fetch(url);
+        if (!response.ok) throw new Error('Network response was not ok');
+        const html = await response.text();
+        
+        // This drops the code into your 'locked' frame
+        contentDiv.innerHTML = html;
+        
+        // 2. CRITICAL: Re-run scripts so the Fuel/News logic actually works
+        const scripts = contentDiv.getElementsByTagName('script');
+        for (let script of scripts) {
+            const newScript = document.createElement("script");
+            if (script.src) {
+                newScript.src = script.src;
+            } else {
+                newScript.textContent = script.textContent;
+            }
+            document.body.appendChild(newScript);
+        }
+    } catch (error) {
+        contentDiv.innerHTML = "<p style='color:red;'>Error loading content: " + error.message + "</p>";
+    }
+}
+
+// 3. THE TRIGGER: This looks at the ?type= parameter in the URL
+const urlParams = new URLSearchParams(window.location.search);
+const currentType = urlParams.get('type') || 'news'; 
+loadComponent(currentType);
+</script>
