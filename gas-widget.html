@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clay County Portal Master</title>
+    <style>
+        /* --- 1. THE LOCKED LAYOUT FRAME --- */
+        body { margin: 0; padding: 0; background: #121212; color: white; font-family: 'Inter', sans-serif; }
+        
+        .my-perfect-layout {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            width: 100%;
+        }
+
+        header {
+            background: #1f1f1f;
+            padding: 20px;
+            text-align: center;
+            border-bottom: 3px solid #00ff00;
+        }
+
+        /* --- 2. THE FLEXIBLE FLOW CSS (Prevents Overlapping) --- */
+        #content-area {
+            position: relative;
+            flex: 1;
+            width: 100%;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        /* Forces internal modules to stay in line */
+        .et_pb_module, .fuel-board, .news-block {
+            position: relative;
+            display: block;
+            margin: 0 auto 30px auto;
+            clear: both;
+        }
+
+        /* --- 3. RESPONSIVE & ULTRAWIDE RULES --- */
+        @media (min-width: 1600px) {
+            #content-area { max-width: 1440px; margin: 0 auto; }
+        }
+
+        @media (max-width: 980px) {
+            header h1 { font-size: 1.2rem; }
+            #content-area { padding: 10px; }
+        }
+
+        /* --- 4. FUEL BOARD SPECIFIC STYLING (The Look you like) --- */
+        .fuel-board {
+            width: 100%; max-width: 480px;
+            background: #121212; border: 2px solid #333; border-radius: 12px;
+            overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+        }
+        .fuel-board-header { background: #1f1f1f; padding: 15px; text-align: center; border-bottom: 2px solid #00ff00; }
+        .live-indicator { font-size: 0.7rem; color: #00ff00; display: flex; align-items: center; justify-content: center; gap: 6px; }
+        .pulse-dot { width: 8px; height: 8px; background: #00ff00; border-radius: 50%; animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { transform: scale(0.9); opacity: 1; } 50% { transform: scale(1.2); opacity: 0.4; } 100% { transform: scale(0.9); opacity: 1; } }
+        .station-row { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; padding: 15px 20px; border-bottom: 1px solid #222; }
+        .st-info { display: flex; align-items: center; gap: 12px; flex: 1 1 180px; }
+        .st-logo { width: 45px; height: 45px; object-fit: contain; }
+        .st-name { color: #fff; font-weight: 800; text-transform: uppercase; font-size: 1rem; margin: 0; }
+        .st-prices { display: flex; gap: 15px; }
+        .val { font-weight: 900; font-size: 1.6rem; font-family: monospace; color: #00ff00; }
+        .dsl { color: #D0BE24; }
+        .lbl { font-size: 0.55rem; color: #888; text-transform: uppercase; font-weight: bold; }
+
+        footer { text-align: center; padding: 20px; color: #444; font-size: 0.8rem; }
+    </style>
+</head>
+<body>
+
+<div class="my-perfect-layout">
+    <header><h1>Clay County Portal</h1></header>
+    
+    <div id="content-area">
+        </div>
+
+    <footer>© 2024 Clay County</footer>
+</div>
+
+<script>
+async function loadComponent(type) {
+    const contentDiv = document.getElementById('content-area');
+    let url = "";
+
+    // ROUTING: Connects slugs to your repos
+    if (type === 'gas' || type === 'fuel') {
+        url = 'https://kfruti88.github.io/Clay-County-Fuel/index.html';
+    } else if (type === 'events' || type === 'calendar') {
+        url = 'https://kfruti88.github.io/Clay-County-All/Calendar/Index.html';
+    } else {
+        url = 'https://kfruti88.github.io/clay-county-news/index.html';
+    }
+
+    try {
+        const response = await fetch(url);
+        if (!response.ok) throw new Error('Not found');
+        const html = await response.text();
+        
+        // Inject the content into the frame
+        contentDiv.innerHTML = html;
+        
+        // Re-trigger scripts (so the Fuel list actually populates)
+        const scripts = contentDiv.getElementsByTagName('script');
+        for (let script of scripts) {
+            const newScript = document.createElement("script");
+            if (script.src) { newScript.src = script.src; } 
+            else { newScript.textContent = script.textContent; }
+            document.body.appendChild(newScript);
+        }
+    } catch (e) {
+        contentDiv.innerHTML = "<p style='text-align:center;'>Unable to load " + type + ".</p>";
+    }
+}
+
+// AUTO-LOADER: Reads the ?type= parameter from WordPress
+const urlParams = new URLSearchParams(window.location.search);
+const currentType = urlParams.get('type') || 'news';
+loadComponent(currentType);
+</script>
+
+</body>
+</html>
