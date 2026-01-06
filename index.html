@@ -22,27 +22,25 @@
         .nav-link { text-decoration: none; padding: 10px 18px; font-weight: bold; text-transform: uppercase; font-size: 0.8rem; transition: all 0.3s ease; border-radius: 5px; border: 1px solid transparent; }
 
         /* --- LOCKED TOWN COLORS & HOVER SWAPS --- */
-        /* Flora: Deep Blue / Vibrant Orange */
+        
+        /* #Flora-colors #lock */
         .link-flora { background-color: #0c0b82 !important; color: #fe4f00 !important; border: 1px solid #fe4f00; }
         .link-flora:hover { background-color: #fe4f00 !important; color: #0c0b82 !important; }
 
-        /* Louisville: Dark Navy / White */
-        .link-louisville { background-color: #00008b !important; color: #ffffff !important; border: 1px solid #ffffff; }
-        .link-louisville:hover { background-color: #ffffff !important; color: #00008b !important; }
+        /* #Louisville-colors #lock */
+        .link-louisville { background-color: #050505 !important; color: #eb1c24 !important; border: 1px solid #eb1c24; }
+        .link-louisville:hover { background-color: #eb1c24 !important; color: #050505 !important; }
 
-        /* Clay City: Deep Purple / Gold */
-        .link-claycity { background-color: #4b0082 !important; color: #ffd700 !important; border: 1px solid #ffd700; }
-        .link-claycity:hover { background-color: #ffd700 !important; color: #4b0082 !important; }
+        /* #Clay-City-colors #lock */
+        .link-clay-city { background-color: #0c30f0 !important; color: #b8b3ae !important; border: 1px solid #b8b3ae; }
+        .link-clay-city:hover { background-color: #b8b3ae !important; color: #0c30f0 !important; }
 
-        /* Xenia: Crimson Red / White */
-        .link-xenia { background-color: #cc0000 !important; color: #ffffff !important; border: 1px solid #ffffff; }
+        /* Xenia & Sailor Springs (Defaults until locked) */
+        .link-xenia { background-color: #cc0000 !important; color: #ffffff !important; }
         .link-xenia:hover { background-color: #ffffff !important; color: #cc0000 !important; }
-
-        /* Sailor Springs: Forest Green / White */
-        .link-sailor { background-color: #006400 !important; color: #ffffff !important; border: 1px solid #ffffff; }
+        .link-sailor { background-color: #006400 !important; color: #ffffff !important; }
         .link-sailor:hover { background-color: #ffffff !important; color: #006400 !important; }
 
-        /* Default Links */
         .link-default { background: #222; color: #00ff00; }
         .link-default:hover { background: #00ff00; color: #000; }
 
@@ -66,7 +64,7 @@
         <a href="?type=local-news" class="nav-link link-default">Full News</a>
         <a href="https://ourflora.com" class="nav-link link-flora" target="_blank">Flora</a>
         <a href="https://supportmylocalcommunity.com/louisville/" class="nav-link link-louisville" target="_blank">Louisville</a>
-        <a href="https://supportmylocalcommunity.com/clay-city/" class="nav-link link-claycity" target="_blank">Clay City</a>
+        <a href="https://supportmylocalcommunity.com/clay-city/" class="nav-link link-clay-city" target="_blank">Clay City</a>
         <a href="https://supportmylocalcommunity.com/xenia/" class="nav-link link-xenia" target="_blank">Xenia</a>
         <a href="https://supportmylocalcommunity.com/sailor-springs/" class="nav-link link-sailor" target="_blank">Sailor Springs</a>
         <a href="?type=gas" class="nav-link link-default">Gas Prices</a>
@@ -123,7 +121,6 @@ async function loadPortal() {
                 const gasData = await gasRes.json();
                 contentDiv.innerHTML = '<h2 style="text-align:center; color:#00ff00;">Local Gas Prices</h2>';
                 gasData.forEach(item => {
-                    // Mapping for station/name and price
                     const name = item.name || item.station || "Local Station";
                     const price = item.price || "---";
                     contentDiv.innerHTML += `
