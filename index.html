@@ -48,27 +48,21 @@
         }
 
         /* --- TOWN SPECIFIC HOVER SWAPS --- */
-        /* Flora: Blue/Orange */
         .link-flora { background: #0000ff; color: #ffa500; }
         .link-flora:hover { background: #ffa500; color: #0000ff; border-color: #0000ff; }
 
-        /* Louisville: Blue/White */
         .link-louisville { background: #00008b; color: #ffffff; }
         .link-louisville:hover { background: #ffffff; color: #00008b; border-color: #00008b; }
 
-        /* Clay City: Purple/Gold */
         .link-claycity { background: #4b0082; color: #ffd700; }
         .link-claycity:hover { background: #ffd700; color: #4b0082; border-color: #4b0082; }
 
-        /* Xenia: Red/White */
         .link-xenia { background: #cc0000; color: #ffffff; }
         .link-xenia:hover { background: #ffffff; color: #cc0000; border-color: #cc0000; }
 
-        /* Sailor Springs: Green/White */
         .link-sailor { background: #006400; color: #ffffff; }
         .link-sailor:hover { background: #ffffff; color: #006400; border-color: #006400; }
 
-        /* Default Links */
         .link-default { background: #222; color: #00ff00; }
         .link-default:hover { background: #00ff00; color: #000; }
 
@@ -101,7 +95,7 @@
 </div>
 
 <script>
-// --- LIVE CLOCK (AM/PM) ---
+// --- LIVE CLOCK ---
 function updateClock() {
     const now = new Date();
     document.getElementById('live-clock').innerText = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'});
@@ -109,61 +103,53 @@ function updateClock() {
 setInterval(updateClock, 1000);
 updateClock();
 
-// --- WEATHER INTEGRATION (Zip: 62839) ---
+// --- WEATHER ---
 async function fetchWeather() {
     const widget = document.getElementById('weather-widget');
     try {
         const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=38.67&longitude=-88.48&current=temperature_2m,apparent_temperature,weather_code&temperature_unit=fahrenheit`);
         const data = await res.json();
-        
         const temp = Math.round(data.current.temperature_2m);
         const feelsLike = Math.round(data.current.apparent_temperature);
         const code = data.current.weather_code;
-        
-        let condition = "Clear";
-        let color = "#00ff00"; // Clear/Default Green
-
+        let condition = "Clear", color = "#00ff00";
         if (code >= 1 && code <= 3) { condition = "Cloudy"; color = "#a0a0a0"; }
         else if ((code >= 51 && code <= 67) || (code >= 80 && code <= 82)) { condition = "Rainy"; color = "#3498db"; }
         else if (code >= 71 && code <= 77 || code === 85 || code === 86) { condition = "Snow"; color = "#ffffff"; }
         else if (code >= 95) { condition = "Stormy"; color = "#f1c40f"; }
-        
         widget.style.color = color;
         widget.innerHTML = `${condition} ${temp}°F (Feels Like ${feelsLike}°F)`;
     } catch (e) { widget.innerText = "Weather Unavailable"; }
 }
 fetchWeather();
-setInterval(fetchWeather, 600000); // Update every 10 mins
+setInterval(fetchWeather, 600000);
 
-// --- MODULE ROUTING ---/* gas widget */
-// --- MODULE: GAS PRICES (The Fix) ---
-if (slug === 'gas') {
-    // 1. Use the FULL URL to your GitHub data
-    const gasUrl = 'https://kfruti88.github.io/Clay-County-Fuel/gas_prices.json';
-    
-    const res = await fetch(gasUrl);
-    
-    // Check if the file actually exists
-    if (!res.ok) throw new Error('File not found');
-    
-    const data = await res.json();
-    contentDiv.innerHTML = '<h2 style="text-align:center;">Local Gas Prices</h2>';
-    
-    data.forEach(item => {
-        // 2. Flexible mapping (handles 'station' OR 'name')
-        const name = item.station || item.name || "Local Station";
-        const price = item.price || "---";
+// --- MODULE ROUTING ---
+async function loadPortal() {
+    const contentDiv = document.getElementById('content-area');
+    const urlParams = new URLSearchParams(window.location.search);
+    const slug = urlParams.get('type') || 'local-news'; 
 
-        contentDiv.innerHTML += `
-            <div class="news-card" style="display:flex; justify-content:space-between; align-items:center;">
-                <span style="font-size:1.2rem; font-weight:bold;">${name}</span>
-                <span style="color:#00ff00; font-size:1.5rem; font-family:monospace;">${price}</span>
-            </div>`;
-    });
-}
+    try {
+        // --- MODULE: GAS PRICES (The Fix) ---
+        if (slug === 'gas') {
+            const gasUrl = 'https://kfruti88.github.io/Clay-County-Fuel/gas_prices.json';
+            const res = await fetch(gasUrl);
+            if (!res.ok) throw new Error('File not found');
+            const data = await res.json();
+            contentDiv.innerHTML = '<h2 style="text-align:center;">Local Gas Prices</h2>';
+            data.forEach(item => {
+                const name = item.station || item.name || "Local Station";
+                const price = item.price || "---";
+                contentDiv.innerHTML += `
+                    <div class="news-card" style="display:flex; justify-content:space-between; align-items:center;">
+                        <span style="font-size:1.2rem; font-weight:bold;">${name}</span>
+                        <span style="color:#00ff00; font-size:1.5rem; font-family:monospace;">${price}</span>
+                    </div>`;
+            });
         } 
         else if (slug === 'calendar') {
-            contentDiv.innerHTML = `<h2 style="text-align:center;">Community Calendar</h2><iframe src="https://calendar.google.com/calendar/embed?src=ceab82d01e29c237da2e761555f2d2c2da76431b94e0def035ff04410e2cd71d%40group.calendar.google.com&ctz=America%2FNew_York" style="height:750px; border:none;" frameborder="0" scrolling="no"></iframe>`;
+            contentDiv.innerHTML = `<h2 style="text-align:center;">Community Calendar</h2><iframe src="https://calendar.google.com/calendar/embed?src=ceab82d01e29c237da2e761555f2d2c2da76431b94e0def035ff04410e2cd71d%40group.calendar.google.com&ctz=America%2FNew_York" style="height:750px; border:none; width:100%;" frameborder="0" scrolling="no"></iframe>`;
         }
         else {
             const res = await fetch('https://kfruti88.github.io/clay-county-news/news_data.json');
@@ -178,7 +164,9 @@ if (slug === 'gas') {
                     </div>`;
             });
         }
-    } catch (e) { contentDiv.innerHTML = `<p style="text-align:center; color:red;">Updating Module...</p>`; }
+    } catch (e) { 
+        contentDiv.innerHTML = `<p style="text-align:center; color:red;">Updating Module... (${e.message})</p>`; 
+    }
 }
 loadPortal();
 </script>
