@@ -19,20 +19,20 @@
     border: 1px solid #fe4f00;
 } 
 
-/* The Swap: When mouse hovers, background becomes Orange, text becomes Blue */
+/* The Swap: When mouse hovers, background becomes Red, text becomes Black */
 .link-louisville:hover { 
     background-color: #eb1c24 !important; 
     color: #050505 !important; 
 }
 #clay-city-colors
-/* Rule for Clay City: Blue Background, Cardinal Red Text */
+/* Rule for Clay City: Blue Background, Grey Text */
 .link-clay-city { 
     background-color: #0c30f0 !important; 
     color: #b8b3ae !important; 
     border: 1px solid #fe4f00;
 } 
 
-/* The Swap: When mouse hovers, background becomes Orange, text becomes Blue */
+/* The Swap: When mouse hovers, background becomes Grey, text becomes Blue */
 .link-clay-city:hover { 
     background-color: #b8b3ae !important; 
     color: #0c30f0 !important; 
