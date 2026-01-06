@@ -1,0 +1,39 @@
+#flora-colors
+/* Rule for Flora: Deep Blue Background, Orange Text */
+.link-flora { 
+    background-color: #0c0b82 !important; 
+    color: #fe4f00 !important; 
+    border: 1px solid #fe4f00;
+} 
+
+/* The Swap: When mouse hovers, background becomes Orange, text becomes Blue */
+.link-flora:hover { 
+    background-color: #fe4f00 !important; 
+    color: #0c0b82 !important; 
+}
+#louisville-colors
+/* Rule for louisville: Black Background, Cardinal Red Text */
+.link-flora { 
+    background-color: #050505 !important; 
+    color: #eb1c24 !important; 
+    border: 1px solid #fe4f00;
+} 
+
+/* The Swap: When mouse hovers, background becomes Orange, text becomes Blue */
+.link-flora:hover { 
+    background-color: #eb1c24 !important; 
+    color: #050505 !important; 
+}
+#clay-city-colors
+/* Rule for louisville: Blue Background, Cardinal Red Text */
+.link-flora { 
+    background-color: #0c30f0 !important; 
+    color: #b8b3ae !important; 
+    border: 1px solid #fe4f00;
+} 
+
+/* The Swap: When mouse hovers, background becomes Orange, text becomes Blue */
+.link-flora:hover { 
+    background-color: #b8b3ae !important; 
+    color: #0c30f0 !important; 
+}
