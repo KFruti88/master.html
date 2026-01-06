@@ -1,4 +1,4 @@
-/* --- 1. THE FLOW PROTECTOR --- */
+/* --- 1. THE FLOW PROTECTOR #lock --- */
 /* Forces every module to respect the boundaries of others */
 .my-perfect-layout, #content-area {
     display: flex;
@@ -7,7 +7,7 @@
     box-sizing: border-box;
 }
 
-/* --- 2. PREVENT OVERLAPPING --- */
+/* --- 2. PREVENT OVERLAPPING #lock --- */
 /* Ensures components 'push' each other down rather than sliding over */
 #content-area > * {
     position: relative !important;
@@ -18,29 +18,86 @@
     clear: both;
 }
 
-/* --- 3. RESPONSIVE GRID (Mobile & Tablet) --- */
+/* --- 3. THE GLOBAL GLUE RULES #lock --- */
+.news-card { 
+    padding: 25px; 
+    margin-bottom: 30px; 
+    border-radius: 8px;
+    transition: 0.4s ease;
+    
+    /* Only allow wrapping at actual spaces */
+    white-space: normal; 
+    
+    /* Prevent breaking in the middle of a word */
+    word-break: keep-all; 
+    
+    /* Ensure long strings don't spill out of the box */
+    overflow-wrap: break-word; 
+}
+
+/* "Glue" class for prices ($4.3) and dates (1st, 2nd) */
+.no-break {
+    white-space: nowrap !important;
+}
+
+/* --- 4. TOWN BRAND COLORS & HOVER SWAPS #lock --- */
+
+/* Flora: Deep Blue / Vibrant Orange */
+.link-flora, .card-flora { 
+    background-color: #0c0b82 !important; 
+    color: #fe4f00 !important; 
+    border: 2px solid #fe4f00 !important; 
+}
+.link-flora:hover, .card-flora:hover { 
+    background-color: #fe4f00 !important; 
+    color: #0c0b82 !important; 
+}
+
+/* Louisville: Black / Cardinal Red (Includes North Clay) */
+.link-louisville, .card-louisville { 
+    background-color: #050505 !important; 
+    color: #eb1c24 !important; 
+    border: 2px solid #eb1c24 !important; 
+}
+.link-louisville:hover, .card-louisville:hover { 
+    background-color: #eb1c24 !important; 
+    color: #050505 !important; 
+}
+
+/* Clay City: Blue / Grey */
+.link-clay-city, .card-clay-city { 
+    background-color: #0c30f0 !important; 
+    color: #b8b3ae !important; 
+    border: 2px solid #b8b3ae !important; 
+}
+.link-clay-city:hover, .card-clay-city:hover { 
+    background-color: #b8b3ae !important; 
+    color: #0c30f0 !important; 
+}
+
+/* Default Theme */
+.link-default, .card-none { 
+    background: #222; 
+    color: #00ff00; 
+    border-left: 8px solid #00ff00; 
+}
+
+/* --- 5. RESPONSIVE & CLEANUP #lock --- */
 @media (max-width: 980px) {
     .my-perfect-layout header h1 {
-        font-size: 1.5rem;
+        font-size: 1.2rem;
         text-align: center;
     }
-    
     #content-area {
         padding: 10px;
     }
 }
 
-/* --- 4. ULTRAWIDE PROTECTION --- */
-@media (min-width: 1600px) {
-    .my-perfect-layout {
-        max-width: 1440px;
-        margin: 0 auto;
-    }
-}
-
-/* --- 5. CLEANUP --- */
 html, body {
     margin: 0;
     padding: 0;
     overflow-x: hidden; /* Prevents side-scrolling on phones */
 }
+
+.news-card h2 { margin-top: 0; color: inherit !important; }
+.story-body { color: inherit !important; }
