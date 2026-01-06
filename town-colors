@@ -12,28 +12,28 @@
     color: #0c0b82 !important; 
 }
 #louisville-colors
-/* Rule for louisville: Black Background, Cardinal Red Text */
-.link-flora { 
+/* Rule for Louisville: Black Background, Cardinal Red Text */
+.link-louisville { 
     background-color: #050505 !important; 
     color: #eb1c24 !important; 
     border: 1px solid #fe4f00;
 } 
 
 /* The Swap: When mouse hovers, background becomes Orange, text becomes Blue */
-.link-flora:hover { 
+.link-louisville:hover { 
     background-color: #eb1c24 !important; 
     color: #050505 !important; 
 }
 #clay-city-colors
-/* Rule for louisville: Blue Background, Cardinal Red Text */
-.link-flora { 
+/* Rule for Clay City: Blue Background, Cardinal Red Text */
+.link-clay-city { 
     background-color: #0c30f0 !important; 
     color: #b8b3ae !important; 
     border: 1px solid #fe4f00;
 } 
 
 /* The Swap: When mouse hovers, background becomes Orange, text becomes Blue */
-.link-flora:hover { 
+.link-clay-city:hover { 
     background-color: #b8b3ae !important; 
     color: #0c30f0 !important; 
 }
