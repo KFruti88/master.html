@@ -5,76 +5,41 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Clay County Master Portal</title>
     <style>
-        /* --- THEME: BLACK, GREEN, WHITE --- */
+        /* --- GLOBAL THEME --- */
         body { margin: 0; padding: 0; background: #000000; color: #ffffff; font-family: 'Inter', sans-serif; overflow-x: hidden; }
         .my-perfect-layout { display: flex; flex-direction: column; min-height: 100vh; }
         
         header { background: #000; padding: 15px; text-align: center; border-bottom: 3px solid #00ff00; }
         header h1 { color: #00ff00; margin: 0; text-transform: uppercase; letter-spacing: 2px; font-size: 1.5rem; }
 
-        /* --- WIDGET BAR --- */
-        .widget-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: #111;
-            padding: 8px 25px;
-            font-size: 0.95rem;
-            border-bottom: 1px solid #333;
-        }
+        /* --- WIDGET BAR (Clock & Weather) --- */
+        .widget-bar { display: flex; justify-content: space-between; align-items: center; background: #111; padding: 8px 25px; font-size: 0.95rem; border-bottom: 1px solid #333; }
         #live-clock { font-weight: bold; color: #00ff00; font-family: 'Courier New', monospace; }
         #weather-widget { font-weight: bold; }
 
-        /* --- DYNAMIC MENU BAR --- */
-        nav { 
-            background: #000; 
-            padding: 12px; 
-            display: flex; 
-            flex-wrap: wrap; 
-            justify-content: center; 
-            gap: 12px;
-            border-bottom: 1px solid #333;
-        }
+        /* --- NAVIGATION MENU --- */
+        nav { background: #000; padding: 12px; display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; border-bottom: 1px solid #333; }
+        .nav-link { text-decoration: none; padding: 10px 18px; font-weight: bold; text-transform: uppercase; font-size: 0.8rem; transition: all 0.3s ease; border-radius: 5px; border: 1px solid transparent; }
 
-        .nav-link { 
-            text-decoration: none; 
-            padding: 10px 18px; 
-            font-weight: bold; 
-            text-transform: uppercase; 
-            font-size: 0.8rem; 
-            transition: all 0.3s ease;
-            border-radius: 5px;
-            border: 1px solid transparent;
-        }
+        /* --- TOWN COLOR & HOVER LOGIC --- */
+        .link-flora { background: #0000ff; color: #ffa500; } .link-flora:hover { background: #ffa500; color: #0000ff; }
+        .link-louisville { background: #00008b; color: #ffffff; } .link-louisville:hover { background: #ffffff; color: #00008b; }
+        .link-claycity { background: #4b0082; color: #ffd700; } .link-claycity:hover { background: #ffd700; color: #4b0082; }
+        .link-xenia { background: #cc0000; color: #ffffff; } .link-xenia:hover { background: #ffffff; color: #cc0000; }
+        .link-sailor { background: #006400; color: #ffffff; } .link-sailor:hover { background: #ffffff; color: #006400; }
+        .link-default { background: #222; color: #00ff00; } .link-default:hover { background: #00ff00; color: #000; }
 
-        /* --- TOWN SPECIFIC HOVER SWAPS --- */
-        .link-flora { background: #0000ff; color: #ffa500; }
-        .link-flora:hover { background: #ffa500; color: #0000ff; border-color: #0000ff; }
-
-        .link-louisville { background: #00008b; color: #ffffff; }
-        .link-louisville:hover { background: #ffffff; color: #00008b; border-color: #00008b; }
-
-        .link-claycity { background: #4b0082; color: #ffd700; }
-        .link-claycity:hover { background: #ffd700; color: #4b0082; border-color: #4b0082; }
-
-        .link-xenia { background: #cc0000; color: #ffffff; }
-        .link-xenia:hover { background: #ffffff; color: #cc0000; border-color: #cc0000; }
-
-        .link-sailor { background: #006400; color: #ffffff; }
-        .link-sailor:hover { background: #ffffff; color: #006400; border-color: #006400; }
-
-        .link-default { background: #222; color: #00ff00; }
-        .link-default:hover { background: #00ff00; color: #000; }
-
+        /* --- CONTENT AREA --- */
         #content-area { flex: 1; padding: 25px; max-width: 1200px; margin: 0 auto; width: 100%; box-sizing: border-box; }
         .news-card { background: #000; padding: 25px; border: 1px solid #333; border-left: 6px solid #00ff00; margin-bottom: 30px; }
+        iframe { width: 100%; height: 800px; border: none; background: white; }
     </style>
 </head>
 <body>
 
 <div class="my-perfect-layout">
     <header><h1>Clay County Portal</h1></header>
-
+    
     <div class="widget-bar">
         <div id="live-clock">00:00:00 AM</div>
         <div id="weather-widget">Loading Weather...</div>
@@ -95,7 +60,7 @@
 </div>
 
 <script>
-// --- LIVE CLOCK ---
+// 1. CLOCK LOGIC
 function updateClock() {
     const now = new Date();
     document.getElementById('live-clock').innerText = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'});
@@ -103,7 +68,7 @@ function updateClock() {
 setInterval(updateClock, 1000);
 updateClock();
 
-// --- WEATHER ---
+// 2. WEATHER LOGIC
 async function fetchWeather() {
     const widget = document.getElementById('weather-widget');
     try {
@@ -112,60 +77,65 @@ async function fetchWeather() {
         const temp = Math.round(data.current.temperature_2m);
         const feelsLike = Math.round(data.current.apparent_temperature);
         const code = data.current.weather_code;
-        let condition = "Clear", color = "#00ff00";
-        if (code >= 1 && code <= 3) { condition = "Cloudy"; color = "#a0a0a0"; }
-        else if ((code >= 51 && code <= 67) || (code >= 80 && code <= 82)) { condition = "Rainy"; color = "#3498db"; }
-        else if (code >= 71 && code <= 77 || code === 85 || code === 86) { condition = "Snow"; color = "#ffffff"; }
-        else if (code >= 95) { condition = "Stormy"; color = "#f1c40f"; }
-        widget.style.color = color;
-        widget.innerHTML = `${condition} ${temp}°F (Feels Like ${feelsLike}°F)`;
-    } catch (e) { widget.innerText = "Weather Unavailable"; }
+        
+        let cond = "Clear", col = "#00ff00";
+        if (code >= 1 && code <= 3) { cond = "Cloudy"; col = "#a0a0a0"; }
+        else if (code >= 51 && code <= 82) { cond = "Rainy"; col = "#3498db"; }
+        else if (code >= 71 && code <= 86) { cond = "Snow"; col = "#ffffff"; }
+        
+        widget.style.color = col;
+        widget.innerHTML = `${cond} ${temp}°F (Feels Like ${feelsLike}°F)`;
+    } catch (e) { widget.innerText = "Weather Offline"; }
 }
 fetchWeather();
 setInterval(fetchWeather, 600000);
 
-// --- MODULE ROUTING ---
+// 3. MODULE ROUTER (The "Brain")
 async function loadPortal() {
     const contentDiv = document.getElementById('content-area');
     const urlParams = new URLSearchParams(window.location.search);
     const slug = urlParams.get('type') || 'local-news'; 
 
+    contentDiv.innerHTML = '<p style="text-align:center;">Syncing Module...</p>';
+
     try {
-        // --- MODULE: GAS PRICES (The Fix) ---
-        if (slug === 'gas') {
-            const gasUrl = 'https://kfruti88.github.io/Clay-County-Fuel/gas_prices.json';
-            const res = await fetch(gasUrl);
-            if (!res.ok) throw new Error('File not found');
-            const data = await res.json();
-            contentDiv.innerHTML = '<h2 style="text-align:center;">Local Gas Prices</h2>';
-            data.forEach(item => {
-                const name = item.station || item.name || "Local Station";
-                const price = item.price || "---";
-                contentDiv.innerHTML += `
-                    <div class="news-card" style="display:flex; justify-content:space-between; align-items:center;">
-                        <span style="font-size:1.2rem; font-weight:bold;">${name}</span>
-                        <span style="color:#00ff00; font-size:1.5rem; font-family:monospace;">${price}</span>
-                    </div>`;
-            });
-        } 
-        else if (slug === 'calendar') {
-            contentDiv.innerHTML = `<h2 style="text-align:center;">Community Calendar</h2><iframe src="https://calendar.google.com/calendar/embed?src=ceab82d01e29c237da2e761555f2d2c2da76431b94e0def035ff04410e2cd71d%40group.calendar.google.com&ctz=America%2FNew_York" style="height:750px; border:none; width:100%;" frameborder="0" scrolling="no"></iframe>`;
+        switch(slug) {
+            case 'gas':
+                const gasRes = await fetch('https://kfruti88.github.io/Clay-County-Fuel/gas_prices.json');
+                if (!gasRes.ok) throw new Error("Gas Prices Not Found");
+                const gasData = await gasRes.json();
+                contentDiv.innerHTML = '<h2 style="text-align:center;">Local Gas Prices</h2>';
+                gasData.forEach(item => {
+                    contentDiv.innerHTML += `
+                        <div class="news-card" style="display:flex; justify-content:space-between; align-items:center;">
+                            <span style="font-size:1.2rem; font-weight:bold;">${item.station || item.name}</span>
+                            <span style="color:#00ff00; font-size:1.5rem; font-family:monospace;">${item.price}</span>
+                        </div>`;
+                });
+                break;
+
+            case 'calendar':
+                contentDiv.innerHTML = `
+                    <h2 style="text-align:center;">Community Calendar</h2>
+                    <iframe src="https://calendar.google.com/calendar/embed?src=ceab82d01e29c237da2e761555f2d2c2da76431b94e0def035ff04410e2cd71d%40group.calendar.google.com&ctz=America%2FNew_York"></iframe>`;
+                break;
+
+            default: // local-news
+                const newsRes = await fetch('https://kfruti88.github.io/clay-county-news/news_data.json');
+                if (!newsRes.ok) throw new Error("News Database Not Found");
+                const newsData = await newsRes.json();
+                contentDiv.innerHTML = '<h2 style="text-align:center;">Latest Full Stories</h2>';
+                newsData.forEach(item => {
+                    contentDiv.innerHTML += `
+                        <div class="news-card">
+                            <h2>${item.title}</h2>
+                            <p style="color:#666; font-size:0.8rem;">${item.date}</p>
+                            <div style="white-space: pre-wrap; line-height:1.6; font-size:1.1rem;">${item.full_story}</div>
+                        </div>`;
+                });
         }
-        else {
-            const res = await fetch('https://kfruti88.github.io/clay-county-news/news_data.json');
-            const data = await res.json();
-            contentDiv.innerHTML = '<h2 style="text-align:center;">Latest Full Stories</h2>';
-            data.forEach(item => {
-                contentDiv.innerHTML += `
-                    <div class="news-card">
-                        <h2>${item.title}</h2>
-                        <p style="color:#666; font-size:0.8rem;">${item.date}</p>
-                        <div style="white-space: pre-wrap; line-height:1.6; font-size:1.1rem;">${item.full_story}</div>
-                    </div>`;
-            });
-        }
-    } catch (e) { 
-        contentDiv.innerHTML = `<p style="text-align:center; color:red;">Updating Module... (${e.message})</p>`; 
+    } catch (e) {
+        contentDiv.innerHTML = `<div style="text-align:center; color:red; padding:40px;"><h3>Module Syncing...</h3><p>${e.message}</p></div>`;
     }
 }
 loadPortal();
