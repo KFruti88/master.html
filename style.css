@@ -1,103 +1,47 @@
-/* --- 1. THE FLOW PROTECTOR #lock --- */
-/* Forces every module to respect the boundaries of others */
-.my-perfect-layout, #content-area {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-    box-sizing: border-box;
+/* --- 1. UNIVERSAL BOX PROTECTION --- */
+/* This forces EVERY element on the page to respect boundaries */
+*, *::before, *::after {
+    box-sizing: border-box !important;
+    max-width: 100%; /* Prevents anything from 'stretching' the screen width */
 }
 
-/* --- 2. PREVENT OVERLAPPING #lock --- */
-/* Ensures components 'push' each other down rather than sliding over */
-#content-area > * {
-    position: relative !important;
-    display: block !important;
-    width: 100% !important;
-    height: auto !important;
-    margin-bottom: 20px;
-    clear: both;
-}
-
-/* --- 3. THE GLOBAL GLUE RULES #lock --- */
-.news-card { 
-    padding: 25px; 
-    margin-bottom: 30px; 
-    border-radius: 8px;
-    transition: 0.4s ease;
-    
-    /* Only allow wrapping at actual spaces */
-    white-space: normal; 
-    
-    /* Prevent breaking in the middle of a word */
-    word-break: keep-all; 
-    
-    /* Ensure long strings don't spill out of the box */
-    overflow-wrap: break-word; 
-}
-
-/* "Glue" class for prices ($4.3) and dates (1st, 2nd) */
-.no-break {
-    white-space: nowrap !important;
-}
-
-/* --- 4. TOWN BRAND COLORS & HOVER SWAPS #lock --- */
-
-/* Flora: Deep Blue / Vibrant Orange */
-.link-flora, .card-flora { 
-    background-color: #0c0b82 !important; 
-    color: #fe4f00 !important; 
-    border: 2px solid #fe4f00 !important; 
-}
-.link-flora:hover, .card-flora:hover { 
-    background-color: #fe4f00 !important; 
-    color: #0c0b82 !important; 
-}
-
-/* Louisville: Black / Cardinal Red (Includes North Clay) */
-.link-louisville, .card-louisville { 
-    background-color: #050505 !important; 
-    color: #eb1c24 !important; 
-    border: 2px solid #eb1c24 !important; 
-}
-.link-louisville:hover, .card-louisville:hover { 
-    background-color: #eb1c24 !important; 
-    color: #050505 !important; 
-}
-
-/* Clay City: Blue / Grey */
-.link-clay-city, .card-clay-city { 
-    background-color: #0c30f0 !important; 
-    color: #b8b3ae !important; 
-    border: 2px solid #b8b3ae !important; 
-}
-.link-clay-city:hover, .card-clay-city:hover { 
-    background-color: #b8b3ae !important; 
-    color: #0c30f0 !important; 
-}
-
-/* Default Theme */
-.link-default, .card-none { 
-    background: #222; 
-    color: #00ff00; 
-    border-left: 8px solid #00ff00; 
-}
-
-/* --- 5. RESPONSIVE & CLEANUP #lock --- */
-@media (max-width: 980px) {
-    .my-perfect-layout header h1 {
-        font-size: 1.2rem;
-        text-align: center;
-    }
-    #content-area {
-        padding: 10px;
-    }
-}
-
-html, body {
+/* --- 2. THE FLOW PROTECTOR --- */
+/* Forces all containers to stack and fit their parent boxes exactly */
+html, body, #content-area, .fuel-board, .news-card {
+    width: 100%;
+    height: 100%;
     margin: 0;
     padding: 0;
-    overflow-x: hidden; /* Prevents side-scrolling on phones */
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden; /* Stops side-scrolling globally */
 }
 
-.news-card h2 { margin-top: 0; color: inherit !important; }
-.story-body { color: inherit !important; }
+/* --- 3. UNIVERSAL IMAGE & LOGO LOCK --- */
+/* Any image on the page will now fit its box without squishing */
+img {
+    max-width: 100%;
+    height: auto !important; 
+    object-fit: contain !important; /* The 'Anti-Squish' rule for all images */
+    display: block;
+}
+
+/* --- 4. UNIVERSAL TEXT & GLUE LOCK --- */
+/* Prevents words from breaking mid-letter and glues dates/prices */
+span, p, h1, h2, h3 {
+    word-break: break-word; /* Allows wrapping at spaces, not mid-word */
+    overflow-wrap: break-word;
+}
+
+/* Use this for 19th, 23rd, and Prices like $2.79 */
+.no-break {
+    white-space: nowrap !important;
+    display: inline-block;
+}
+
+/* --- 5. AUTOMATIC FONT SCALING --- */
+/* All text inside 'boxes' will now shrink to fit if the box gets tiny */
+div, p, span {
+    font-size: clamp(0.6rem, 2vw, 1.1rem);
+    line-height: 1.2;
+}
