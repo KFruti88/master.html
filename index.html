@@ -21,7 +21,7 @@
 
         /* --- 4. NEWS CARD & BUTTON STYLES --- */
         .news-card { background: #1f1f1f; padding: 20px; border-radius: 8px; border-left: 4px solid #00ff00; margin-bottom: 20px; }
-        .pop-button { background: #00ff00; color: black; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        .pop-button { background: #00ff00; color: black; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; margin-top: 10px; }
 
         /* --- 5. NEWS MODAL STYLES --- */
         .news-modal {
@@ -68,10 +68,7 @@
 
 <div class="my-perfect-layout">
     <header><h1>Clay County Portal</h1></header>
-    
-    <div id="content-area">
-        </div>
-
+    <div id="content-area"></div>
     <footer>© 2026 Clay County</footer>
 </div>
 
@@ -107,14 +104,13 @@ window.onclick = function(event) {
 async function loadPortal() {
     const contentDiv = document.getElementById('content-area');
     const urlParams = new URLSearchParams(window.location.search);
-    // Defaults to 'local-news' if no type is provided
     const slug = urlParams.get('type') || 'local-news'; 
 
     try {
-        contentDiv.innerHTML = '<p style="text-align:center;">Loading Local Content...</p>';
+        // FIXED URL TO PREVENT SYNC ERROR (Using absolute path)
+        const res = await fetch('https://kfruti88.github.io/clay-county-news/news_data.json');
+        if (!res.ok) throw new Error("Could not find the news database.");
         
-        // Fetch your local news data
-        const res = await fetch('news_data.json');
         const data = await res.json();
         contentDiv.innerHTML = ''; 
 
@@ -127,7 +123,7 @@ async function loadPortal() {
             renderFuelBoard(fuelData); 
         } 
         
-        // --- MODULE 2: TOWN NEWS (Snippets + Modal Pop-out) ---
+        // --- MODULE 2: TOWN NEWS (Snippet + Modal Pop-out) ---
         else if (slug !== 'local-news') {
             const filtered = data.filter(item => 
                 item.tags.some(t => t.toLowerCase() === slug.toLowerCase())
@@ -138,18 +134,22 @@ async function loadPortal() {
             }
 
             filtered.forEach(item => {
+                // Clean strings for JS passing
+                const cleanTitle = item.title.replace(/'/g, "\\'");
+                const cleanBody = item.full_story.replace(/'/g, "\\'").replace(/\n/g, "\\n");
+
                 contentDiv.innerHTML += `
                     <div class="news-card">
                         <h3>${item.title}</h3>
                         <p>${item.full_story.substring(0, 150)}...</p>
-                        <button class="pop-button" onclick="openStory(\`${item.title.replace(/`/g, "'")}\`, \`${item.full_story.replace(/`/g, "'")}\")">
+                        <button class="pop-button" onclick="openStory('${cleanTitle}', '${cleanBody}')">
                             Read More
                         </button>
                     </div>`;
             });
         } 
 
-        // --- MODULE 3: LOCAL NEWS (#keep full story) ---
+        // --- MODULE 3: LOCAL NEWS (#keep full story goes to https://supportmylocalcommunity.com/local-news/) ---
         else {
             data.forEach(item => {
                 contentDiv.innerHTML += `
@@ -162,8 +162,9 @@ async function loadPortal() {
             });
         }
     } catch (e) {
-        contentDiv.innerHTML = `<div style="color:#ff4444; text-align:center; padding:40px;">
-            <strong>Sync Error:</strong> ${e.message}
+        contentDiv.innerHTML = `<div style="color:red; text-align:center; padding:40px;">
+            <strong>Sync Error:</strong> ${e.message}<br>
+            Please check that the JSON file is published at the correct URL.
         </div>`;
     }
 }
@@ -171,7 +172,10 @@ async function loadPortal() {
 function renderFuelBoard(data) {
     const board = document.getElementById('gas-board');
     if (!board) return;
-    // Your specific fuel board rendering logic here
+    // Map through fuel data here...
+    data.forEach(fuel => {
+        board.innerHTML += `<p>${fuel.station}: ${fuel.price}</p>`;
+    });
 }
 
 loadPortal();
