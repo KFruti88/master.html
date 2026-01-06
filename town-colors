@@ -1,4 +1,4 @@
-#flora-colors
+#Flora-colors #lock
 /* Rule for Flora: Deep Blue Background, Orange Text */
 .link-flora { 
     background-color: #0c0b82 !important; 
@@ -11,7 +11,7 @@
     background-color: #fe4f00 !important; 
     color: #0c0b82 !important; 
 }
-#louisville-colors
+#Louisville-colors #lock
 /* Rule for Louisville: Black Background, Cardinal Red Text */
 .link-louisville { 
     background-color: #050505 !important; 
@@ -24,7 +24,7 @@
     background-color: #eb1c24 !important; 
     color: #050505 !important; 
 }
-#clay-city-colors
+#Clay-City-colors #lock
 /* Rule for Clay City: Blue Background, Grey Text */
 .link-clay-city { 
     background-color: #0c30f0 !important; 
