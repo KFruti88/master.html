@@ -135,24 +135,32 @@ async function fetchWeather() {
 fetchWeather();
 setInterval(fetchWeather, 600000); // Update every 10 mins
 
-// --- MODULE ROUTING ---
-async function loadPortal() {
-    const contentDiv = document.getElementById('content-area');
-    const urlParams = new URLSearchParams(window.location.search);
-    const slug = urlParams.get('type') || 'local-news'; 
+// --- MODULE ROUTING ---/* gas widget */
+// --- MODULE: GAS PRICES (The Fix) ---
+if (slug === 'gas') {
+    // 1. Use the FULL URL to your GitHub data
+    const gasUrl = 'https://kfruti88.github.io/Clay-County-Fuel/gas_prices.json';
+    
+    const res = await fetch(gasUrl);
+    
+    // Check if the file actually exists
+    if (!res.ok) throw new Error('File not found');
+    
+    const data = await res.json();
+    contentDiv.innerHTML = '<h2 style="text-align:center;">Local Gas Prices</h2>';
+    
+    data.forEach(item => {
+        // 2. Flexible mapping (handles 'station' OR 'name')
+        const name = item.station || item.name || "Local Station";
+        const price = item.price || "---";
 
-    try {
-        if (slug === 'gas') {
-            const res = await fetch('https://kfruti88.github.io/Clay-County-Fuel/gas_prices.json');
-            const data = await res.json();
-            contentDiv.innerHTML = '<h2 style="text-align:center;">Local Gas Prices</h2>';
-            data.forEach(item => {
-                contentDiv.innerHTML += `
-                    <div class="news-card" style="display:flex; justify-content:space-between; align-items:center;">
-                        <span style="font-size:1.2rem; font-weight:bold;">${item.station || item.name}</span>
-                        <span style="color:#00ff00; font-size:1.5rem; font-family:monospace;">${item.price}</span>
-                    </div>`;
-            });
+        contentDiv.innerHTML += `
+            <div class="news-card" style="display:flex; justify-content:space-between; align-items:center;">
+                <span style="font-size:1.2rem; font-weight:bold;">${name}</span>
+                <span style="color:#00ff00; font-size:1.5rem; font-family:monospace;">${price}</span>
+            </div>`;
+    });
+}
         } 
         else if (slug === 'calendar') {
             contentDiv.innerHTML = `<h2 style="text-align:center;">Community Calendar</h2><iframe src="https://calendar.google.com/calendar/embed?src=ceab82d01e29c237da2e761555f2d2c2da76431b94e0def035ff04410e2cd71d%40group.calendar.google.com&ctz=America%2FNew_York" style="height:750px; border:none;" frameborder="0" scrolling="no"></iframe>`;
