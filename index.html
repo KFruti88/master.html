@@ -19,7 +19,11 @@
         @media (max-width: 980px) { header h1 { font-size: 1.2rem; } #content-area { padding: 10px; } }
         @media (min-width: 1600px) { #content-area { max-width: 1440px; margin: 0 auto; } }
 
-        /* --- 4. NEWS MODAL STYLES (New) --- */
+        /* --- 4. NEWS CARD & BUTTON STYLES --- */
+        .news-card { background: #1f1f1f; padding: 20px; border-radius: 8px; border-left: 4px solid #00ff00; margin-bottom: 20px; }
+        .pop-button { background: #00ff00; color: black; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; }
+
+        /* --- 5. NEWS MODAL STYLES --- */
         .news-modal {
             display: none; 
             position: fixed; 
@@ -81,45 +85,82 @@
 </div>
 
 <script>
-// Logic to handle Pop-out Story
+// --- MODAL LOGIC ---
 function openStory(title, content) {
     document.getElementById('modalTitle').innerText = title;
     document.getElementById('modalBody').innerText = content;
     document.getElementById('storyModal').style.display = "block";
-    document.body.style.overflow = "hidden"; // Stop scrolling background
+    document.body.style.overflow = "hidden";
 }
 
 function closeStory() {
     document.getElementById('storyModal').style.display = "none";
-    document.body.style.overflow = "auto"; // Enable scrolling background
+    document.body.style.overflow = "auto";
 }
 
-// Close modal if user clicks outside the box
 window.onclick = function(event) {
     const modal = document.getElementById('storyModal');
     if (event.target == modal) { closeStory(); }
 }
 
+// --- PORTAL ROUTER LOGIC ---
 async function loadPortal() {
     const contentDiv = document.getElementById('content-area');
-    
-    try {
-        const urlParams = new URLSearchParams(window.location.search);
-        const label = urlParams.get('type') || 'default';
+    const urlParams = new URLSearchParams(window.location.search);
+    // Defaults to 'local-news' if no type is provided
+    const slug = urlParams.get('type') || 'local-news'; 
 
-        if (label.includes('gas')) {
+    try {
+        contentDiv.innerHTML = '<p style="text-align:center;">Loading Local Content...</p>';
+        
+        // Fetch your local news data
+        const res = await fetch('news_data.json');
+        const data = await res.json();
+        contentDiv.innerHTML = ''; 
+
+        // --- MODULE 1: GAS PRICES ---
+        if (slug === 'gas') {
             const fuelUrl = "https://kfruti88.github.io/Clay-County-Fuel/gas_prices.json";
-            const res = await fetch(fuelUrl);
-            const fuelData = await res.json();
+            const fuelRes = await fetch(fuelUrl);
+            const fuelData = await fuelRes.json();
             contentDiv.innerHTML = `<h2>Live Gas Prices</h2><div id="gas-board"></div>`;
             renderFuelBoard(fuelData); 
         } 
-        else {
-            // Updated News Logic to use the Modal instead of just an Iframe if you prefer direct rendering
-            // For now, keeping your Iframe logic as you had it:
-            contentDiv.innerHTML = `<iframe src="https://kfruti88.github.io/clay-county-news/index.html" style="width:100%; height:1500px; border:none;"></iframe>`;
-        }
+        
+        // --- MODULE 2: TOWN NEWS (Snippets + Modal Pop-out) ---
+        else if (slug !== 'local-news') {
+            const filtered = data.filter(item => 
+                item.tags.some(t => t.toLowerCase() === slug.toLowerCase())
+            );
+            
+            if(filtered.length === 0) {
+                contentDiv.innerHTML = `<h3>No specific news for ${slug} right now.</h3>`;
+            }
 
+            filtered.forEach(item => {
+                contentDiv.innerHTML += `
+                    <div class="news-card">
+                        <h3>${item.title}</h3>
+                        <p>${item.full_story.substring(0, 150)}...</p>
+                        <button class="pop-button" onclick="openStory(\`${item.title.replace(/`/g, "'")}\`, \`${item.full_story.replace(/`/g, "'")}\")">
+                            Read More
+                        </button>
+                    </div>`;
+            });
+        } 
+
+        // --- MODULE 3: LOCAL NEWS (#keep full story) ---
+        else {
+            data.forEach(item => {
+                contentDiv.innerHTML += `
+                    <div class="news-card">
+                        <h2>${item.title}</h2>
+                        <p style="color:#888; font-size:0.8rem;">Published: ${item.date}</p>
+                        <div style="white-space: pre-wrap;">${item.full_story}</div>
+                        <hr style="border-color:#333; margin:30px 0;">
+                    </div>`;
+            });
+        }
     } catch (e) {
         contentDiv.innerHTML = `<div style="color:#ff4444; text-align:center; padding:40px;">
             <strong>Sync Error:</strong> ${e.message}
@@ -130,7 +171,7 @@ async function loadPortal() {
 function renderFuelBoard(data) {
     const board = document.getElementById('gas-board');
     if (!board) return;
-    // Gas rendering logic here
+    // Your specific fuel board rendering logic here
 }
 
 loadPortal();
