@@ -1,57 +1,46 @@
-/* --- 1. UNIVERSAL FLUID PROTECTION #lock --- */
-/* Forces every element on the page to respect boundaries and scaling */
+/* --- 1. GLOBAL BOUNDARY LOCK #lock --- */
 *, *::before, *::after {
     box-sizing: border-box !important;
-    max-width: 100%;
+    max-width: 100%; /* Prevents width overflow globally */
 }
 
-/* --- 2. THE DYNAMIC ROW PROTECTOR #lock --- */
-/* Keeps your 3 boxes side-by-side (Row) instead of stacking (Column) */
-html, body, #content-area, .et_pb_row {
-    width: 100%;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-direction: row; 
-    justify-content: center;
-    align-items: center;
-    overflow-x: hidden; /* Prevents horizontal scrolling on all devices */
+/* --- 2. UNRESTRICTED BOX FLOW #lock --- */
+/* Allows boxes to grow and be positioned anywhere */
+.et_pb_column, .fuel-board, .news-card, .et_pb_module {
+    height: auto !important;      
+    min-height: 10px;             
+    max-height: none !important;  
+    position: relative !important; /* Supports your -450px offsets */
+    display: block !important;    
 }
 
-/* --- 3. VW-BASED POSITIONING (Fluid Replacement for Pixels) --- */
-/* Replaces -450px and 450px. These values shrink automatically with the screen */
-.left-box {
-    position: relative;
-    left: -17.5vw !important; 
-}
-
-.right-box {
-    position: relative;
-    right: 17.5vw !important;
-}
-
-/* --- 4. UNIVERSAL IMAGE & LOGO LOCK #lock --- */
-/* Any image on the page will now fit its box without squishing */
+/* --- 3. ANTI-SQUISH IMAGE RULE #lock --- */
+/* Protects logos from distortion across all pages */
 img {
-    width: 5vw !important; /* Scales image size relative to screen width */
-    min-width: 30px;      /* Prevents image from disappearing on tiny screens */
+    max-width: 100% !important;
     height: auto !important;
-    object-fit: contain !important; /* The 'Anti-Squish' rule for all logos */
-    display: block;
+    object-fit: contain !important; /* Keeps aspect ratio perfect */
 }
 
-/* --- 5. UNIVERSAL TEXT & GLUE LOCK #lock --- */
-/* Scales text proportionally and glues dates/prices */
+/* --- 4. FLUID SCALING & WORD GLUE #lock --- */
+/* Scales text based on screen width */
 p, span, h1, h2, h3 {
-    font-size: 1.2vw !important; /* 100% at 2560px becomes 80% at 1280px */
-    min-size: 10px;
-    line-height: 1.2;
-    word-break: break-word; 
-    overflow-wrap: break-word;
+    font-size: clamp(0.7rem, 1.5vw, 1.5rem) !important; 
+    word-break: break-word !important; 
+    overflow-wrap: break-word !important;
 }
 
-/* Use this for 19th, 23rd, and Prices like $2.79 */
+/* The 'Glue' for prices and dates */
 .no-break {
     white-space: nowrap !important;
     display: inline-block;
+}
+
+/* --- 5. ULTRA-WIDE TO LAPTOP SYNC #lock --- */
+/* Centers the row but allows it to fill the screen */
+.et_pb_row {
+    width: 100% !important;
+    max-width: none !important;
+    display: block !important; 
+    margin: 0 auto !important;
 }
