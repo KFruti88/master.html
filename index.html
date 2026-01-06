@@ -13,56 +13,59 @@
         header h1 { color: #00ff00; margin: 0; text-transform: uppercase; letter-spacing: 2px; font-size: 1.5rem; }
 
         /* --- WIDGET BAR (Clock & Weather) --- */
-        .widget-bar { display: flex; justify-content: space-between; align-items: center; background: #111; padding: 8px 25px; font-size: 0.95rem; border-bottom: 1px solid #333; }
+        .widget-bar { display: flex; justify-content: space-between; align-items: center; background: #111; padding: 8px 25px; border-bottom: 1px solid #333; }
         #live-clock { font-weight: bold; color: #00ff00; font-family: 'Courier New', monospace; }
         #weather-widget { font-weight: bold; }
 
-        /* --- NAVIGATION MENU --- */
+        /* --- NAVIGATION --- */
         nav { background: #000; padding: 12px; display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; border-bottom: 1px solid #333; }
-        .nav-link { text-decoration: none; padding: 10px 18px; font-weight: bold; text-transform: uppercase; font-size: 0.8rem; transition: all 0.3s ease; border-radius: 5px; border: 1px solid transparent; }
+        .nav-link { text-decoration: none; padding: 10px 18px; font-weight: bold; text-transform: uppercase; font-size: 0.8rem; transition: 0.3s; border-radius: 5px; }
 
-        /* --- LOCKED MENU COLORS & HOVER SWAPS --- */
-        .link-flora { background-color: #0c0b82 !important; color: #fe4f00 !important; border: 1px solid #fe4f00; }
-        .link-flora:hover { background-color: #fe4f00 !important; color: #0c0b82 !important; }
+        /* --- TOWN COLOR SCHEMES (Menu & Cards) --- */
+        
+        /* Flora: Deep Blue / Vibrant Orange */
+        .link-flora, .card-flora { background-color: #0c0b82 !important; color: #fe4f00 !important; border: 2px solid #fe4f00 !important; }
+        .link-flora:hover, .card-flora:hover { background-color: #fe4f00 !important; color: #0c0b82 !important; }
 
-        .link-louisville { background-color: #050505 !important; color: #eb1c24 !important; border: 1px solid #eb1c24; }
-        .link-louisville:hover { background-color: #eb1c24 !important; color: #050505 !important; }
+        /* Louisville: Black / Cardinal Red */
+        .link-louisville, .card-louisville { background-color: #050505 !important; color: #eb1c24 !important; border: 2px solid #eb1c24 !important; }
+        .link-louisville:hover, .card-louisville:hover { background-color: #eb1c24 !important; color: #050505 !important; }
 
-        .link-clay-city { background-color: #0c30f0 !important; color: #b8b3ae !important; border: 1px solid #b8b3ae; }
-        .link-clay-city:hover { background-color: #b8b3ae !important; color: #0c30f0 !important; }
+        /* Clay City: Blue / Grey */
+        .link-clay-city, .card-clay-city { background-color: #0c30f0 !important; color: #b8b3ae !important; border: 2px solid #b8b3ae !important; }
+        .link-clay-city:hover, .card-clay-city:hover { background-color: #b8b3ae !important; color: #0c30f0 !important; }
 
         .link-default { background: #222; color: #00ff00; }
         .link-default:hover { background: #00ff00; color: #000; }
 
-        /* --- CONTENT AREA & TOWN CARD THEMES --- */
+        /* --- CONTENT AREA --- */
         #content-area { flex: 1; padding: 25px; max-width: 1200px; margin: 0 auto; width: 100%; box-sizing: border-box; }
         
-        .news-card { background: #000; padding: 25px; border: 1px solid #333; border-left: 6px solid #00ff00; margin-bottom: 30px; }
+        .news-card { 
+            padding: 25px; 
+            margin-bottom: 30px; 
+            transition: 0.4s ease; 
+            border-radius: 8px;
+            cursor: default;
+        }
         
-        /* #Flora-colors #lock - Blue/Orange */
-        .card-flora { border-left: 10px solid #fe4f00 !important; background: #0c0b82 !important; color: #fe4f00 !important; }
-        
-        /* #Louisville-colors #lock - Black/Red (Triggers for North Clay) */
-        .card-louisville { border-left: 10px solid #eb1c24 !important; background: #050505 !important; color: #eb1c24 !important; }
-        
-        /* #Clay-City-colors #lock - Blue/Grey */
-        .card-clay-city { border-left: 10px solid #b8b3ae !important; background: #0c30f0 !important; color: #b8b3ae !important; }
+        /* Standard Card (When no town detected) */
+        .card-none { border-left: 8px solid #00ff00; background: #111; color: #ffffff; }
 
-        /* Readable text override for themed cards */
-        .news-card h2 { color: inherit !important; margin-top: 0; }
-        .news-card .story-body { color: #ffffff !important; white-space: pre-wrap; line-height: 1.6; font-size: 1.1rem; }
+        .news-card h2 { margin-top: 0; color: inherit !important; }
+        .story-body { white-space: pre-wrap; line-height: 1.6; font-size: 1.1rem; color: inherit !important; }
         
         iframe { width: 100%; height: 800px; border: none; background: white; }
     </style>
 </head>
 <body>
-#lock
+
 <div class="my-perfect-layout">
     <header><h1>Support My Local Community</h1></header>
-    #lock
+    
     <div class="widget-bar">
         <div id="live-clock">00:00:00 AM</div>
-        <div id="weather-widget">Down Pour Flooded the System...</div>
+        <div id="weather-widget">Loading Weather...</div>
     </div>
     
     <nav>
@@ -94,66 +97,65 @@ async function fetchWeather() {
         const data = await res.json();
         const temp = Math.round(data.current.temperature_2m);
         const code = data.current.weather_code;
+        
         let cond = "Clear", col = "#00ff00";
         if (code >= 1 && code <= 3) { cond = "Cloudy"; col = "#a0a0a0"; }
         else if (code >= 51 && code <= 82) { cond = "Rainy"; col = "#3498db"; }
+        
         widget.style.color = col;
         widget.innerHTML = `${cond} ${temp}°F`;
     } catch (e) { widget.innerText = "Weather Offline"; }
 }
 fetchWeather();
 
-// 3. ROUTER
+// 3. ROUTER & TOWN CARD LOGIC
 async function loadPortal() {
     const contentDiv = document.getElementById('content-area');
     const urlParams = new URLSearchParams(window.location.search);
     const slug = urlParams.get('type') || 'local-news'; 
 
     try {
-        switch(slug) {
-            case 'gas':
-                const gasRes = await fetch('https://kfruti88.github.io/Clay-County-Fuel/gas_prices.json');
-                const gasData = await gasRes.json();
-                contentDiv.innerHTML = '<h2 style="text-align:center; color:#00ff00;">Local Gas Prices</h2>';
-                gasData.forEach(item => {
-                    contentDiv.innerHTML += `
-                        <div class="news-card" style="display:flex; justify-content:space-between; align-items:center;">
-                            <span style="font-size:1.2rem; font-weight:bold;">${item.name || item.station}</span>
-                            <span style="color:#00ff00; font-size:1.5rem; font-family:monospace;">${item.price}</span>
-                        </div>`;
-                });
-                break;
+        if (slug === 'gas') {
+            const res = await fetch('https://kfruti88.github.io/Clay-County-Fuel/gas_prices.json');
+            const data = await res.json();
+            contentDiv.innerHTML = '<h2 style="text-align:center; color:#00ff00;">Local Gas Prices</h2>';
+            data.forEach(item => {
+                contentDiv.innerHTML += `
+                    <div class="news-card card-none" style="display:flex; justify-content:space-between; align-items:center;">
+                        <span style="font-size:1.2rem; font-weight:bold;">${item.name || item.station}</span>
+                        <span style="color:#00ff00; font-size:1.5rem; font-family:monospace;">${item.price}</span>
+                    </div>`;
+            });
+        } 
+        else if (slug === 'calendar') {
+            contentDiv.innerHTML = `<h2 style="text-align:center; color:#00ff00;">Community Calendar</h2>
+                <iframe src="https://calendar.google.com/calendar/embed?src=ceab82d01e29c237da2e761555f2d2c2da76431b94e0def035ff04410e2cd71d%40group.calendar.google.com&ctz=America%2FNew_York"></iframe>`;
+        }
+        else {
+            const res = await fetch('https://kfruti88.github.io/clay-county-news/news_data.json');
+            const data = await res.json();
+            contentDiv.innerHTML = '<h2 style="text-align:center; color:#00ff00;">Latest Full Stories</h2>';
+            
+            data.forEach(item => {
+                let townClass = "card-none";
+                const text = (item.title + item.full_story).toLowerCase();
 
-            case 'calendar':
-                contentDiv.innerHTML = `<h2 style="text-align:center; color:#00ff00;">Community Calendar</h2>
-                    <iframe src="https://calendar.google.com/calendar/embed?src=ceab82d01e29c237da2e761555f2d2c2da76431b94e0def035ff04410e2cd71d%40group.calendar.google.com&ctz=America%2FNew_York"></iframe>`;
-                break;
+                // Determine Town Theme
+                if (text.includes("flora")) {
+                    townClass = "card-flora";
+                } else if (text.includes("louisville") || text.includes("north clay")) {
+                    townClass = "card-louisville";
+                } else if (text.includes("clay city")) {
+                    townClass = "card-clay-city";
+                }
 
-            default: // #keep full story logic with Town Themes
-                const newsRes = await fetch('https://kfruti88.github.io/clay-county-news/news_data.json');
-                const newsData = await newsRes.json();
-                contentDiv.innerHTML = '<h2 style="text-align:center; color:#00ff00;">Latest Full Stories</h2>';
-                
-                newsData.forEach(item => {
-                    let townClass = "";
-                    // Check title and story for keywords
-                    const text = (item.title + item.full_story).toLowerCase();
-
-                    if (text.includes("flora")) {
-                        townClass = "card-flora";
-                    } else if (text.includes("louisville") || text.includes("north clay")) {
-                        townClass = "card-louisville";
-                    } else if (text.includes("clay city")) {
-                        townClass = "card-clay-city";
-                    }
-
-                    contentDiv.innerHTML += `
-                        <div class="news-card ${townClass}">
-                            <h2>${item.title}</h2>
-                            <p style="opacity: 0.7; font-size:0.8rem;">${item.date}</p>
-                            <div class="story-body">${item.full_story}</div>
-                        </div>`;
-                });
+                contentDiv.innerHTML += `
+                    <div class="news-card ${townClass}">
+                        <h2>${item.title}</h2>
+                        <p style="opacity: 0.8; font-size:0.8rem;">${item.date}</p>
+                        <div class="story-body">${item.full_story}</div>
+                    </div>`;
+            });
         }
     } catch (e) {
         contentDiv.innerHTML = `<p style="text-align:center; color:red;">Syncing Module...</p>`;
