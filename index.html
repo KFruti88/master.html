@@ -21,32 +21,37 @@
         nav { background: #000; padding: 12px; display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; border-bottom: 1px solid #333; }
         .nav-link { text-decoration: none; padding: 10px 18px; font-weight: bold; text-transform: uppercase; font-size: 0.8rem; transition: all 0.3s ease; border-radius: 5px; border: 1px solid transparent; }
 
-        /* --- LOCKED TOWN COLORS & HOVER SWAPS --- */
-        
-        /* #Flora-colors #lock */
+        /* --- LOCKED MENU COLORS & HOVER SWAPS --- */
         .link-flora { background-color: #0c0b82 !important; color: #fe4f00 !important; border: 1px solid #fe4f00; }
         .link-flora:hover { background-color: #fe4f00 !important; color: #0c0b82 !important; }
 
-        /* #Louisville-colors #lock */
         .link-louisville { background-color: #050505 !important; color: #eb1c24 !important; border: 1px solid #eb1c24; }
         .link-louisville:hover { background-color: #eb1c24 !important; color: #050505 !important; }
 
-        /* #Clay-City-colors #lock */
         .link-clay-city { background-color: #0c30f0 !important; color: #b8b3ae !important; border: 1px solid #b8b3ae; }
         .link-clay-city:hover { background-color: #b8b3ae !important; color: #0c30f0 !important; }
-
-        /* Xenia & Sailor Springs (Defaults until locked) */
-        .link-xenia { background-color: #cc0000 !important; color: #ffffff !important; }
-        .link-xenia:hover { background-color: #ffffff !important; color: #cc0000 !important; }
-        .link-sailor { background-color: #006400 !important; color: #ffffff !important; }
-        .link-sailor:hover { background-color: #ffffff !important; color: #006400 !important; }
 
         .link-default { background: #222; color: #00ff00; }
         .link-default:hover { background: #00ff00; color: #000; }
 
-        /* --- CONTENT AREA --- */
+        /* --- CONTENT AREA & TOWN CARD THEMES --- */
         #content-area { flex: 1; padding: 25px; max-width: 1200px; margin: 0 auto; width: 100%; box-sizing: border-box; }
+        
         .news-card { background: #000; padding: 25px; border: 1px solid #333; border-left: 6px solid #00ff00; margin-bottom: 30px; }
+        
+        /* #Flora-colors #lock - Blue/Orange */
+        .card-flora { border-left: 10px solid #fe4f00 !important; background: #0c0b82 !important; color: #fe4f00 !important; }
+        
+        /* #Louisville-colors #lock - Black/Red (Triggers for North Clay) */
+        .card-louisville { border-left: 10px solid #eb1c24 !important; background: #050505 !important; color: #eb1c24 !important; }
+        
+        /* #Clay-City-colors #lock - Blue/Grey */
+        .card-clay-city { border-left: 10px solid #b8b3ae !important; background: #0c30f0 !important; color: #b8b3ae !important; }
+
+        /* Readable text override for themed cards */
+        .news-card h2 { color: inherit !important; margin-top: 0; }
+        .news-card .story-body { color: #ffffff !important; white-space: pre-wrap; line-height: 1.6; font-size: 1.1rem; }
+        
         iframe { width: 100%; height: 800px; border: none; background: white; }
     </style>
 </head>
@@ -65,8 +70,6 @@
         <a href="https://ourflora.com" class="nav-link link-flora" target="_blank">Flora</a>
         <a href="https://supportmylocalcommunity.com/louisville/" class="nav-link link-louisville" target="_blank">Louisville</a>
         <a href="https://supportmylocalcommunity.com/clay-city/" class="nav-link link-clay-city" target="_blank">Clay City</a>
-        <a href="https://supportmylocalcommunity.com/xenia/" class="nav-link link-xenia" target="_blank">Xenia</a>
-        <a href="https://supportmylocalcommunity.com/sailor-springs/" class="nav-link link-sailor" target="_blank">Sailor Springs</a>
         <a href="?type=gas" class="nav-link link-default">Gas Prices</a>
         <a href="?type=calendar" class="nav-link link-default">Calendar</a>
     </nav>
@@ -75,7 +78,7 @@
 </div>
 
 <script>
-// 1. CLOCK LOGIC
+// 1. CLOCK
 function updateClock() {
     const now = new Date();
     document.getElementById('live-clock').innerText = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'});
@@ -83,76 +86,77 @@ function updateClock() {
 setInterval(updateClock, 1000);
 updateClock();
 
-// 2. WEATHER LOGIC
+// 2. WEATHER
 async function fetchWeather() {
     const widget = document.getElementById('weather-widget');
     try {
         const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=38.67&longitude=-88.48&current=temperature_2m,apparent_temperature,weather_code&temperature_unit=fahrenheit`);
         const data = await res.json();
         const temp = Math.round(data.current.temperature_2m);
-        const feelsLike = Math.round(data.current.apparent_temperature);
         const code = data.current.weather_code;
-        
         let cond = "Clear", col = "#00ff00";
         if (code >= 1 && code <= 3) { cond = "Cloudy"; col = "#a0a0a0"; }
         else if (code >= 51 && code <= 82) { cond = "Rainy"; col = "#3498db"; }
-        else if (code >= 71 && code <= 86) { cond = "Snow"; col = "#ffffff"; }
-        
         widget.style.color = col;
-        widget.innerHTML = `${cond} ${temp}°F (Feels Like ${feelsLike}°F)`;
+        widget.innerHTML = `${cond} ${temp}°F`;
     } catch (e) { widget.innerText = "Weather Offline"; }
 }
 fetchWeather();
-setInterval(fetchWeather, 600000);
 
-// 3. MODULE ROUTER
+// 3. ROUTER
 async function loadPortal() {
     const contentDiv = document.getElementById('content-area');
     const urlParams = new URLSearchParams(window.location.search);
     const slug = urlParams.get('type') || 'local-news'; 
 
-    contentDiv.innerHTML = '<p style="text-align:center;">Syncing Module...</p>';
-
     try {
         switch(slug) {
             case 'gas':
                 const gasRes = await fetch('https://kfruti88.github.io/Clay-County-Fuel/gas_prices.json');
-                if (!gasRes.ok) throw new Error("Gas Prices Not Found");
                 const gasData = await gasRes.json();
                 contentDiv.innerHTML = '<h2 style="text-align:center; color:#00ff00;">Local Gas Prices</h2>';
                 gasData.forEach(item => {
-                    const name = item.name || item.station || "Local Station";
-                    const price = item.price || "---";
                     contentDiv.innerHTML += `
                         <div class="news-card" style="display:flex; justify-content:space-between; align-items:center;">
-                            <span style="font-size:1.2rem; font-weight:bold;">${name}</span>
-                            <span style="color:#00ff00; font-size:1.5rem; font-family:monospace;">${price}</span>
+                            <span style="font-size:1.2rem; font-weight:bold;">${item.name || item.station}</span>
+                            <span style="color:#00ff00; font-size:1.5rem; font-family:monospace;">${item.price}</span>
                         </div>`;
                 });
                 break;
 
             case 'calendar':
-                contentDiv.innerHTML = `
-                    <h2 style="text-align:center; color:#00ff00;">Community Calendar</h2>
+                contentDiv.innerHTML = `<h2 style="text-align:center; color:#00ff00;">Community Calendar</h2>
                     <iframe src="https://calendar.google.com/calendar/embed?src=ceab82d01e29c237da2e761555f2d2c2da76431b94e0def035ff04410e2cd71d%40group.calendar.google.com&ctz=America%2FNew_York"></iframe>`;
                 break;
 
-            default: // local-news
+            default: // #keep full story logic with Town Themes
                 const newsRes = await fetch('https://kfruti88.github.io/clay-county-news/news_data.json');
-                if (!newsRes.ok) throw new Error("News Database Not Found");
                 const newsData = await newsRes.json();
                 contentDiv.innerHTML = '<h2 style="text-align:center; color:#00ff00;">Latest Full Stories</h2>';
+                
                 newsData.forEach(item => {
+                    let townClass = "";
+                    // Check title and story for keywords
+                    const text = (item.title + item.full_story).toLowerCase();
+
+                    if (text.includes("flora")) {
+                        townClass = "card-flora";
+                    } else if (text.includes("louisville") || text.includes("north clay")) {
+                        townClass = "card-louisville";
+                    } else if (text.includes("clay city")) {
+                        townClass = "card-clay-city";
+                    }
+
                     contentDiv.innerHTML += `
-                        <div class="news-card">
+                        <div class="news-card ${townClass}">
                             <h2>${item.title}</h2>
-                            <p style="color:#666; font-size:0.8rem;">${item.date}</p>
-                            <div style="white-space: pre-wrap; line-height:1.6; font-size:1.1rem;">${item.full_story}</div>
+                            <p style="opacity: 0.7; font-size:0.8rem;">${item.date}</p>
+                            <div class="story-body">${item.full_story}</div>
                         </div>`;
                 });
         }
     } catch (e) {
-        contentDiv.innerHTML = `<div style="text-align:center; color:red; padding:40px;"><h3>Module Syncing...</h3><p>${e.message}</p></div>`;
+        contentDiv.innerHTML = `<p style="text-align:center; color:red;">Syncing Module...</p>`;
     }
 }
 loadPortal();
