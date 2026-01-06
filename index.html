@@ -56,13 +56,13 @@
     </style>
 </head>
 <body>
-
+#lock
 <div class="my-perfect-layout">
-    <header><h1>Clay County Portal</h1></header>
-    
+    <header><h1>Support My Local Community</h1></header>
+    #lock
     <div class="widget-bar">
         <div id="live-clock">00:00:00 AM</div>
-        <div id="weather-widget">Loading Weather...</div>
+        <div id="weather-widget">Down Pour Flooded the System...</div>
     </div>
     
     <nav>
@@ -78,7 +78,7 @@
 </div>
 
 <script>
-// 1. CLOCK
+// 1. CLOCK #lock
 function updateClock() {
     const now = new Date();
     document.getElementById('live-clock').innerText = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'});
@@ -86,7 +86,7 @@ function updateClock() {
 setInterval(updateClock, 1000);
 updateClock();
 
-// 2. WEATHER
+// 2. WEATHER #lock
 async function fetchWeather() {
     const widget = document.getElementById('weather-widget');
     try {
