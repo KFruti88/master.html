@@ -1,39 +1,10 @@
-#Flora-colors #lock
-/* Rule for Flora: Deep Blue Background, Orange Text */
-.link-flora { 
-    background-color: #0c0b82 !important; 
-    color: #fe4f00 !important; 
-    border: 1px solid #fe4f00;
-} 
-
-/* The Swap: When mouse hovers, background becomes Orange, text becomes Blue */
-.link-flora:hover { 
-    background-color: #fe4f00 !important; 
-    color: #0c0b82 !important; 
-}
-#Louisville-colors #lock
-/* Rule for Louisville: Black Background, Cardinal Red Text */
-.link-louisville { 
-    background-color: #050505 !important; 
-    color: #eb1c24 !important; 
-    border: 1px solid #fe4f00;
-} 
-
-/* The Swap: When mouse hovers, background becomes Red, text becomes Black */
-.link-louisville:hover { 
-    background-color: #eb1c24 !important; 
-    color: #050505 !important; 
-}
-#Clay-City-colors #lock
-/* Rule for Clay City: Blue Background, Grey Text */
-.link-clay-city { 
-    background-color: #0c30f0 !important; 
-    color: #b8b3ae !important; 
-    border: 1px solid #fe4f00;
-} 
-
-/* The Swap: When mouse hovers, background becomes Grey, text becomes Blue */
-.link-clay-city:hover { 
-    background-color: #b8b3ae !important; 
-    color: #0c30f0 !important; 
-}
+// The "Color Lock" Mapping for your specific town branding
+    const townColors = {
+        "Flora": { bg: "#0c0b82", text: "#fe4f00" },          // Deep Blue / Orange
+        "Louisville": { bg: "#010101", text: "#eb1c24" },     // Black / Cardinal Red
+        "North Clay": { bg: "#010101", text: "#eb1c24" },     // Black / Cardinal Red
+        "Clay City": { bg: "#0c30f0", text: "#8a8a88" },      // Blue / Grey
+        "Xenia": { bg: "#000000", text: "#fdb813" },          // Black / School Bus Yellow
+        "Sailor Springs": { bg: "#000000", text: "#a020f0" }, // Black / Purple
+        "Clay County": { bg: "#333333", text: "#ffffff" }     // Charcoal / White
+    };
