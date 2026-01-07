@@ -1,46 +1,70 @@
-/* --- 1. GLOBAL BOUNDARY LOCK #lock --- */
+/* --- 1. THE RATIO ENGINE --- */
+:root {
+    --card-ratio: 4 / 3;
+    --board-ratio: 16 / 9;
+    --square-ratio: 1 / 1;
+}
+
+/* --- 2. GLOBAL FLEXIBILITY --- */
 *, *::before, *::after {
     box-sizing: border-box !important;
-    max-width: 100%; /* Prevents width overflow globally */
 }
 
-/* --- 2. UNRESTRICTED BOX FLOW #lock --- */
-/* Allows boxes to grow and be positioned anywhere */
-.et_pb_column, .fuel-board, .news-card, .et_pb_module {
-    height: auto !important;      
-    min-height: 10px;             
-    max-height: none !important;  
-    position: relative !important; /* Supports your -450px offsets */
-    display: block !important;    
+/* --- 3. THE RATIO LOCK #lock --- */
+/* This replaces fixed heights. The height is now calculated by the width */
+.fuel-board, 
+.news-card, 
+.et_pb_column,
+.et_pb_module {
+    height: auto !important; /* Reset Divi defaults */
+    aspect-ratio: var(--board-ratio); /* Maintains shape regardless of screen width */
+    display: flex !important;
+    flex-direction: column;
+    justify-content: center;
+    position: relative !important;
 }
 
-/* --- 3. ANTI-SQUISH IMAGE RULE #lock --- */
-/* Protects logos from distortion across all pages */
+/* Specific ratio for cards if they are different from the board */
+.news-card {
+    aspect-ratio: var(--card-ratio);
+}
+
+/* --- 4. IMAGE RATIO LOCK --- */
+/* Prevents logos and trucks from squishing/stretching */
 img {
-    max-width: 100% !important;
-    height: auto !important;
-    object-fit: contain !important; /* Keeps aspect ratio perfect */
-}
-
-/* --- 4. FLUID SCALING & WORD GLUE #lock --- */
-/* Scales text based on screen width */
-p, span, h1, h2, h3 {
-    font-size: clamp(0.7rem, 1.5vw, 1.5rem) !important; 
-    word-break: break-word !important; 
-    overflow-wrap: break-word !important;
-}
-
-/* The 'Glue' for prices and dates */
-.no-break {
-    white-space: nowrap !important;
-    display: inline-block;
-}
-
-/* --- 5. ULTRA-WIDE TO LAPTOP SYNC #lock --- */
-/* Centers the row but allows it to fill the screen */
-.et_pb_row {
     width: 100% !important;
-    max-width: none !important;
-    display: block !important; 
+    height: auto !important;
+    aspect-ratio: auto; /* Let the image's natural ratio rule */
+    object-fit: contain !important; 
+}
+
+/* Use this class for background images you want to crop perfectly */
+.ratio-bg-img {
+    width: 100% !important;
+    aspect-ratio: 16 / 9;
+    object-fit: cover !important;
+}
+
+/* --- 5. TEXT SCALING (FLUID) --- */
+/* Aspect ratios fail if text is too big. This keeps text inside the "box" */
+p, span, h1, h2, h3 {
+    font-size: clamp(0.8rem, 1.2vw, 1.8rem) !important;
+    margin: 0;
+    overflow-wrap: break-word;
+}
+
+/* --- 6. ULTRA-WIDE SCALING (Wider than 1080p) --- */
+.et_pb_row {
+    display: flex !important;
+    flex-wrap: wrap;
+    width: 95vw !important; /* Uses 95% of the glass width */
+    max-width: 2200px !important; /* The "Anchor" for 4K screens */
     margin: 0 auto !important;
+    gap: 2vw; /* Spacing scales with screen size */
+}
+
+/* --- 7. HANDLING YOUR OFFSETS --- */
+/* Instead of -450px, move things based on their own height */
+.offset-up {
+    transform: translateY(-20%); /* Moves it up by 20% of its own height */
 }
