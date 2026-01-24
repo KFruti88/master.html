@@ -6,27 +6,36 @@
     <title>Clay County | Master Portal</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
+        /* Default Base Colors */
+        :root {
+            --bg-start: #1e3c72;
+            --bg-end: #2a5298;
+            --accent: rgba(255, 255, 255, 0.2);
+        }
+
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body {
             font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            /* The background now uses CSS Variables that change via JS */
+            background: linear-gradient(135deg, var(--bg-start) 0%, var(--bg-end) 100%);
             height: 100vh;
             display: flex;
             color: white;
+            transition: background 0.8s ease; /* Smooth color transition */
             overflow: hidden;
         }
 
         /* Glassmorphism Sidebar */
         nav {
             width: 280px;
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.2);
             backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border-right: 1px solid rgba(255, 255, 255, 0.2);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
             display: flex;
             flex-direction: column;
             padding: 30px 15px;
+            z-index: 10;
         }
 
         .brand {
@@ -34,30 +43,26 @@
             font-weight: 800;
             text-align: center;
             margin-bottom: 40px;
-            text-transform: uppercase;
             letter-spacing: 2px;
-            text-shadow: 0 4px 10px rgba(0,0,0,0.3);
         }
 
         .nav-link {
             padding: 15px 20px;
             margin: 5px 0;
             border-radius: 12px;
-            color: rgba(255, 255, 255, 0.8);
+            color: rgba(255, 255, 255, 0.7);
             text-decoration: none;
             display: flex;
             align-items: center;
             gap: 15px;
-            transition: all 0.3s ease;
+            transition: 0.3s;
             cursor: pointer;
-            border: 1px solid transparent;
         }
 
         .nav-link:hover, .nav-link.active {
-            background: rgba(255, 255, 255, 0.2);
+            background: var(--accent);
             color: #fff;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            transform: translateX(5px);
         }
 
         /* Content Area */
@@ -75,88 +80,88 @@
             border-radius: 20px;
             border: 1px solid rgba(255, 255, 255, 0.1);
             overflow: hidden;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
         }
 
-        iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
+        iframe { width: 100%; height: 100%; border: none; }
 
         .header-bar {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 10px 20px 20px 20px;
+            padding: 0 10px 15px 10px;
         }
 
-        .status-dot {
-            height: 10px;
-            width: 10px;
-            background-color: #00ff88;
-            border-radius: 50%;
-            display: inline-block;
-            box-shadow: 0 0 10px #00ff88;
+        #town-label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.8;
         }
     </style>
 </head>
 <body>
 
     <nav>
-        <div class="brand">Clay County Hub</div>
+        <div class="brand">Clay County</div>
         
-        <div class="nav-link active" onclick="loadSite('https://kfruti88.github.io/clay-county-news/')">
-            <i class="fas fa-newspaper"></i> News Portal
+        <div class="nav-link active" onclick="syncPortal('Flora', '#004d40', '#00241a', 'https://kfruti88.github.io/Our-Flora/')">
+            <i class="fas fa-seedling"></i> Our Flora
         </div>
         
-        <div class="nav-link" onclick="loadSite('https://kfruti88.github.io/Clay-County-Fuel/')">
-            <i class="fas fa-gas-pump"></i> Fuel Tracker
+        <div class="nav-link" onclick="syncPortal('News', '#1a237e', '#000051', 'https://kfruti88.github.io/clay-county-news/')">
+            <i class="fas fa-newspaper"></i> County News
         </div>
         
-        <div class="nav-link" onclick="loadSite('https://kfruti88.github.io/Clay-County-Bulletin/')">
+        <div class="nav-link" onclick="syncPortal('Fuel', '#bf360c', '#5f1200', 'https://kfruti88.github.io/Clay-County-Fuel/')">
+            <i class="fas fa-gas-pump"></i> Fuel Prices
+        </div>
+
+        <div class="nav-link" onclick="syncPortal('Bulletin', '#4a148c', '#12005e', 'https://kfruti88.github.io/Clay-County-Bulletin/')">
             <i class="fas fa-bullhorn"></i> Bulletin Board
         </div>
 
-        <div class="nav-link" onclick="loadSite('https://kfruti88.github.io/Our-Flora/')">
-            <i class="fas fa-seedling"></i> Our Flora
-        </div>
-
-        <div class="nav-link" onclick="loadSite('https://kfruti88.github.io/Buisness-Directory/')">
-            <i class="fas fa-store"></i> Business Directory
-        </div>
-
-        <div class="nav-link" onclick="loadSite('https://kfruti88.github.io/amazon/')">
+        <div class="nav-link" onclick="syncPortal('Shopping', '#ff9900', '#232f3e', 'https://kfruti88.github.io/amazon/')">
             <i class="fab fa-amazon"></i> Local Deals
         </div>
     </nav>
 
     <main>
         <div class="header-bar">
-            <h2 id="view-title">News Portal</h2>
             <div>
-                <span class="status-dot"></span> System Synced
+                <p id="town-label">Viewing Local Context</p>
+                <h2 id="view-title">Our Flora</h2>
             </div>
+            <div id="sync-status"><i class="fas fa-sync-alt fa-spin"></i> Live Sync</div>
         </div>
 
         <div class="content-frame">
-            <iframe id="master-frame" src="https://kfruti88.github.io/clay-county-news/"></iframe>
+            <iframe id="master-frame" src="https://kfruti88.github.io/Our-Flora/"></iframe>
         </div>
     </main>
 
     <script>
-        function loadSite(url) {
+        /**
+         * syncPortal: Updates the UI colors and Frame source
+         * @param {string} name - The display name
+         * @param {string} color1 - Primary Town Color
+         * @param {string} color2 - Secondary Town Color
+         * @param {string} url - The Repo URL
+         */
+        function syncPortal(name, color1, color2, url) {
+            const root = document.documentElement;
             const frame = document.getElementById('master-frame');
             const title = document.getElementById('view-title');
+
+            // 1. Update CSS Variables for the "Glossy" look
+            root.style.setProperty('--bg-start', color1);
+            root.style.setProperty('--bg-end', color2);
             
-            // Set the new URL
+            // 2. Update Text and Iframe
+            title.innerText = name;
             frame.src = url;
 
-            // Update title text based on what was clicked
-            const linkText = event.currentTarget.innerText;
-            title.innerText = linkText;
-
-            // Update active state in sidebar
+            // 3. Handle Active State for Nav Links
             document.querySelectorAll('.nav-link').forEach(link => {
                 link.classList.remove('active');
             });
