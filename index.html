@@ -3,241 +3,190 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clay County Master Hub | Live Dashboard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <title>Clay County Master Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #08080a;
+            --bg: #0a0a0c;
             --primary: #007aff;
             --accent: #ffcc00;
             --glass: rgba(255, 255, 255, 0.03);
-            --border: rgba(255, 255, 255, 0.08);
+            --border: rgba(255, 255, 255, 0.1);
         }
 
         body {
             font-family: 'Outfit', sans-serif;
-            background-color: var(--bg);
+            background: var(--bg);
             color: white;
             margin: 0;
-            overflow-x: hidden;
+            padding: 0;
         }
 
-        /* 1. SLOW SCROLLING NOTIFICATION (Header Ticker) */
-        .top-ticker {
+        /* 1. ULTRA-SLOW STICKY TICKER */
+        .master-ticker {
             background: var(--primary);
             color: white;
-            padding: 12px 0;
-            white-space: nowrap;
-            overflow: hidden;
-            position: sticky;
+            padding: 15px 0;
+            position: fixed;
             top: 0;
-            z-index: 1000;
-            font-weight: 700;
-            border-bottom: 1px solid var(--border);
+            width: 100%;
+            z-index: 9999;
+            overflow: hidden;
+            font-weight: bold;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
         }
 
-        .ticker-move {
+        .ticker-text {
             display: inline-block;
-            animation: ticker-slow 45s linear infinite; /* Slowed down significantly */
+            white-space: nowrap;
+            animation: ticker-ultra-slow 60s linear infinite;
         }
 
-        @keyframes ticker-slow {
+        @keyframes ticker-ultra-slow {
             0% { transform: translateX(100%); }
             100% { transform: translateX(-100%); }
         }
 
-        /* Layout Content */
-        .hero {
-            padding: 80px 5% 40px;
-            text-align: center;
-            background: linear-gradient(to bottom, #001f3f, var(--bg));
-        }
-
-        .hero h1 { font-size: 3.5rem; margin: 0; letter-spacing: -2px; }
-
-        /* 2. SCROLLING DIRECTORY & NEWS BLOCKS */
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 25px;
-            padding: 40px 5%;
-        }
-
-        .glass-panel {
-            background: var(--glass);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--border);
-            border-radius: 24px;
-            height: 450px; /* Fixed height for scrolling content */
+        /* 2. STACKED FULL-WIDTH CONTAINERS */
+        .section-stack {
+            margin-top: 60px; /* Offset for ticker */
             display: flex;
             flex-direction: column;
-            overflow: hidden;
+            gap: 0; /* Flush stack for a professional look */
         }
 
-        .panel-header {
-            padding: 20px 25px;
-            background: rgba(255,255,255,0.02);
+        .full-module {
+            width: 100%;
+            min-height: 80vh;
+            padding: 60px 5%;
+            box-sizing: border-box;
             border-bottom: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            position: relative;
         }
 
-        /* AUTO-SCROLLING CONTAINER FOR DIRECTORY/NEWS */
-        .scroll-area {
-            flex: 1;
-            overflow-y: auto;
-            padding: 20px;
-            scrollbar-width: thin;
-            scrollbar-color: var(--primary) transparent;
-        }
-
-        /* Individual Data Items */
-        .item-card {
-            background: rgba(255,255,255,0.02);
-            border: 1px solid var(--border);
-            padding: 15px;
-            border-radius: 15px;
-            margin-bottom: 12px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: 0.3s;
-        }
-
-        .item-card:hover { background: rgba(0, 122, 255, 0.1); border-color: var(--primary); }
-
-        .price-badge {
-            background: var(--accent);
-            color: black;
-            padding: 4px 10px;
-            border-radius: 8px;
-            font-weight: 800;
-        }
-
-        .category-tag {
-            font-size: 0.7rem;
+        /* Module Headers */
+        .module-label {
+            color: var(--accent);
             text-transform: uppercase;
-            border: 1px solid var(--primary);
-            padding: 2px 6px;
-            border-radius: 4px;
-            color: var(--primary);
+            letter-spacing: 3px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            display: block;
         }
 
-        footer {
-            text-align: center;
+        .module-title {
+            font-size: 3rem;
+            margin: 0 0 40px 0;
+            letter-spacing: -2px;
+        }
+
+        /* 3. THE REPO DATA INJECTION AREAS */
+        .content-frame {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: 30px;
+            width: 100%;
+            height: 600px;
+            overflow-y: auto;
             padding: 40px;
-            opacity: 0.4;
-            font-size: 0.8rem;
+            box-shadow: inset 0 0 50px rgba(0,0,0,0.5);
+        }
+
+        /* iFrame styling for exact HTML source viewing */
+        iframe {
+            width: 100%;
+            height: 600px;
+            border: none;
+            border-radius: 20px;
+            background: #fff; /* Most original HTMLs expect a light bg */
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
+
+        .btn-sync {
+            background: var(--primary);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            display: inline-block;
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
 
-<div class="top-ticker">
-    <div class="ticker-move" id="master-ticker">
-        INITIALIZING DATA SYNC... CONNECTING TO CLAY COUNTY REPOSITORIES... UPDATING LIVE FUEL PRICES... FETCHING LATEST BULLETIN HEADLINES...
+<div class="master-ticker">
+    <div class="ticker-text" id="master-ticker-content">
+        CLAY COUNTY MASTER HUB SYNCING... NEWS ENGINE ONLINE... FUEL TRACKER ACTIVE... DIRECTORY LOADED... AMAZON DEALS UPDATED...
     </div>
 </div>
 
-<header class="hero">
-    <h1>Clay County Master Index</h1>
-    <p style="color: var(--accent); font-weight: 600;">Centralized Intelligence Dashboard</p>
-</header>
-
-<div class="dashboard-grid">
-    <section class="glass-panel">
-        <div class="panel-header">
-            <h2>Local News Feed</h2>
-            <span class="category-tag">Live</span>
+<div class="section-stack">
+    
+    <section class="full-module" id="news-section" style="background: linear-gradient(180deg, #0a0a0c 0%, #001f3f 100%);">
+        <span class="module-label">Live Intelligence</span>
+        <h2 class="module-title">Clay County Bulletin</h2>
+        <div class="content-frame" id="news-injection">
+            <h3>Connecting to Engine...</h3>
         </div>
-        <div class="scroll-area" id="news-engine-target">
-            <p>Syncing News Engine...</p>
+        <a href="https://github.com/KFruti88/clay-county-news" class="btn-sync">Go to News Repo</a>
+    </section>
+
+    <section class="full-module" id="fuel-section" style="background: #0a0a0c;">
+        <span class="module-label">Economic Tracker</span>
+        <h2 class="module-title">Live Fuel Monitor</h2>
+        <div class="content-frame">
+            <iframe src="https://kfruti88.github.io/Clay-County-Fuel/index.html"></iframe>
         </div>
     </section>
 
-    <section class="glass-panel">
-        <div class="panel-header">
-            <h2>Fuel Price Tracker</h2>
-            <span class="category-tag">Market</span>
-        </div>
-        <div class="scroll-area" id="fuel-tracker-target">
-            <p>Syncing Fuel Data...</p>
+    <section class="full-module" id="directory-section" style="background: linear-gradient(180deg, #0a0a0c 0%, #1a1a1a 100%);">
+        <span class="module-label">Community Commerce</span>
+        <h2 class="module-title">Business Directory</h2>
+        <div class="content-frame">
+            <iframe src="https://kfruti88.github.io/Buisness-Directory/index.html"></iframe>
         </div>
     </section>
 
-    <section class="glass-panel">
-        <div class="panel-header">
-            <h2>Business Directory</h2>
-            <span class="category-tag">Local</span>
-        </div>
-        <div class="scroll-area" id="directory-target">
-            <div class="item-card"><span>S&K Ventures Signs</span> <span class="category-tag">Main</span></div>
-            <div class="item-card"><span>Clay County Real Estate</span> <span class="category-tag">Main</span></div>
-            <div class="item-card"><span>Loading additional listings...</span></div>
-        </div>
+    <section class="full-module" id="amazon-section">
+        <span class="module-label">Featured Deals</span>
+        <h2 class="module-title">Amazon Influencer Feed</h2>
+        <div class="content-frame" id="amazon-injection">
+            </div>
+        <a href="https://github.com/KFruti88/amazon" class="btn-sync" style="background: #ff9900; color: #000;">Shop My Feed</a>
     </section>
 
-    <section class="glass-panel">
-        <div class="panel-header">
-            <h2>Amazon Influencer Feed</h2>
-            <span class="category-tag">Deals</span>
-        </div>
-        <div class="scroll-area" id="amazon-target">
-            <p>Fetching XML Feed...</p>
-        </div>
-    </section>
 </div>
 
-<footer>
-    &copy; 2026 KFruti88 Digital Projects | Data synced via GitHub Raw API
-</footer>
-
 <script>
-    /** * THE MASTER SYNC ENGINE 
-     * This connects to your repositories automatically.
-     */
-    async function runMasterSync() {
-        const USER = "KFruti88";
+    const USER = "KFruti88";
 
-        // 1. SYNC NEWS ENGINE
+    async function syncMasterData() {
+        // 1. SYNC NEWS ENGINE (Full Data)
         try {
             const res = await fetch(`https://raw.githubusercontent.com/${USER}/clay-county-news/main/news_data.json`);
             const news = await res.json();
             
             // Update Ticker
-            document.getElementById('master-ticker').innerText = 
-                news.map(n => ` • ${n.title.toUpperCase()} [${n.date || 'NEW'}]`).join(' ');
+            document.getElementById('master-ticker-content').innerText = 
+                news.map(n => ` +++ ${n.title.toUpperCase()}`).join(' ');
 
-            // Update Panel
-            document.getElementById('news-engine-target').innerHTML = news.map(n => `
-                <div class="item-card">
-                    <div>
-                        <div style="font-weight:600">${n.title}</div>
-                        <div style="font-size:0.7rem; opacity:0.5">${n.date || ''}</div>
-                    </div>
+            // Full display injection
+            document.getElementById('news-injection').innerHTML = news.map(n => `
+                <div style="background:rgba(255,255,255,0.05); padding:20px; border-radius:15px; margin-bottom:20px; border:1px solid var(--border);">
+                    <h4 style="margin:0; color:var(--primary);">${n.title}</h4>
+                    <p style="opacity:0.7;">${n.content || 'Click to view full story...'}</p>
+                    <small style="color:var(--accent);">${n.date || ''}</small>
                 </div>
             `).join('');
-        } catch(e) { console.error("News sync failed"); }
+        } catch(e) { console.error("News sync error"); }
 
-        // 2. SYNC FUEL TRACKER (Mocking the store logic from your sheets.js)
-        try {
-            // In a full build, you'd fetch your generated JSON from the Fuel repo
-            const fuelData = [
-                { name: "Louisville Shell", price: "$3.14" },
-                { name: "Flora BP", price: "$3.09" },
-                { name: "Casey's General", price: "$3.12" },
-                { name: "Xpress Stop", price: "$3.05" }
-            ];
-            document.getElementById('fuel-tracker-target').innerHTML = fuelData.map(f => `
-                <div class="item-card">
-                    <span>${f.name}</span>
-                    <span class="price-badge">${f.price}</span>
-                </div>
-            `).join('');
-        } catch(e) { console.error("Fuel sync failed"); }
-
-        // 3. SYNC AMAZON FEED (XML Parser)
+        // 2. SYNC AMAZON XML FEED
         try {
             const res = await fetch(`https://raw.githubusercontent.com/${USER}/amazon/main/feed.xml`);
             const text = await res.text();
@@ -246,14 +195,18 @@
             let html = "";
             items.forEach(item => {
                 const title = item.querySelector("title").textContent;
-                html += `<div class="item-card"><span>${title}</span></div>`;
+                const link = item.querySelector("link").textContent;
+                html += `
+                <div style="background:rgba(255,255,255,0.05); padding:15px; border-radius:12px; margin-bottom:10px; display:flex; justify-content:space-between;">
+                    <span>${title}</span>
+                    <a href="${link}" target="_blank" style="color:var(--accent);">View Deal</a>
+                </div>`;
             });
-            document.getElementById('amazon-target').innerHTML = html;
-        } catch(e) { console.error("Amazon sync failed"); }
+            document.getElementById('amazon-injection').innerHTML = html;
+        } catch(e) { console.error("Amazon sync error"); }
     }
 
-    // Initialize the sync
-    window.onload = runMasterSync;
+    window.onload = syncMasterData;
 </script>
 
 </body>
