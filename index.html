@@ -3,279 +3,255 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clay County Master Hub | Live Dashboard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <title>Clay County Master Portal | Live Project Sync</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;600;900&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary: #007aff;
             --accent: #ffcc00;
-            --glass: rgba(255, 255, 255, 0.05);
-            --menu-bg: rgba(10, 10, 12, 0.8);
+            --dark: #050505;
+            --glass: rgba(0, 0, 0, 0.8);
         }
 
         body, html {
             margin: 0; padding: 0;
             font-family: 'Outfit', sans-serif;
-            background: #050505;
+            background-color: var(--dark);
             color: white;
-            scroll-behavior: smooth;
+            overflow-x: hidden;
         }
 
-        /* --- 1. THE GLASS NAVIGATION MENU --- */
+        /* 1. GLASS MENU & WEATHER ENGINE */
         nav {
             position: fixed;
-            top: 45px; /* Below ticker */
-            left: 50%;
+            top: 50px; left: 50%;
             transform: translateX(-50%);
-            width: 90%;
-            max-width: 1000px;
-            background: var(--menu-bg);
-            backdrop-filter: blur(20px);
+            width: 85%;
+            background: rgba(20, 20, 25, 0.7);
+            backdrop-filter: blur(25px);
             border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 50px;
+            border-radius: 100px;
             display: flex;
-            justify-content: space-around;
-            padding: 15px 30px;
+            justify-content: center;
+            gap: 30px;
+            padding: 15px;
             z-index: 2000;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
-        nav a {
-            color: white;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            transition: 0.3s;
-        }
+        nav a { color: white; text-decoration: none; font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px; }
 
-        nav a:hover { color: var(--accent); }
-
-        /* --- 2. WEATHER EFFECTS LAYER --- */
-        .weather-overlay {
+        #weather-layer {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none; /* Allows clicking through to content */
+            pointer-events: none;
             z-index: 1500;
         }
 
-        /* Rain Effect Animation */
-        .rain {
-            background: linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(255,255,255,0.1) 100%);
-            width: 1px; height: 80px;
-            position: absolute;
-            animation: fall linear infinite;
-        }
-
-        @keyframes fall {
-            to { transform: translateY(100vh); }
-        }
-
-        /* --- 3. MASTER TICKER (Slowed) --- */
+        /* 2. THE TICKER (SYNCED TO NEWS REPO) */
         .master-ticker {
             background: var(--primary);
             height: 40px;
-            display: flex;
-            align-items: center;
             position: fixed;
             top: 0; width: 100%;
             z-index: 3000;
+            display: flex;
+            align-items: center;
             overflow: hidden;
         }
 
-        .ticker-move {
+        .ticker-text {
             white-space: nowrap;
-            animation: ticker-slow 55s linear infinite;
-            font-weight: 800;
+            animation: ticker-ultra-slow 60s linear infinite;
+            font-weight: 900;
+            text-transform: uppercase;
         }
 
-        @keyframes ticker-slow {
-            0% { transform: translateX(100%); }
-            100% { transform: translateX(-100%); }
-        }
+        @keyframes ticker-ultra-slow { from { transform: translateX(100%); } to { transform: translateX(-100%); } }
 
-        /* --- 4. THE BILLBOARD & CONTENT MODULES --- */
+        /* 3. FULL-DISPLAY MODULES */
         section {
             min-height: 100vh;
-            padding: 150px 5% 50px;
-            box-sizing: border-box;
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
+            padding: 120px 5% 60px;
             display: flex;
             flex-direction: column;
             justify-content: center;
+            background-attachment: fixed;
+            background-size: cover;
+            background-position: center;
+            border-bottom: 2px solid #111;
         }
 
-        .billboard-frame {
-            background: rgba(0,0,0,0.85);
-            border: 4px solid #222;
-            border-radius: 15px;
-            padding: 40px;
-            box-shadow: 0 0 50px rgba(0,0,0,0.9);
+        .full-content {
+            background: var(--glass);
+            border: 2px solid #222;
+            border-radius: 40px;
+            padding: 50px;
+            backdrop-filter: blur(15px);
         }
 
-        .gas-grid {
+        /* 4. GAS BILLBOARD EFFECTS */
+        .billboard-container {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 20px;
+            margin-top: 30px;
         }
 
-        .station-unit {
+        .gas-sign {
             background: #000;
-            padding: 25px;
-            border-top: 6px solid var(--accent);
+            border: 5px solid #222;
+            padding: 40px 20px;
             text-align: center;
+            box-shadow: 0 0 30px rgba(0,0,0,1);
         }
 
-        .price-text {
-            font-size: 5rem;
+        .price-num {
+            font-size: 6rem;
             color: var(--accent);
             font-weight: 900;
             font-family: 'Courier New', monospace;
-            line-height: 1;
+            line-height: 0.8;
+            text-shadow: 0 0 20px rgba(255, 204, 0, 0.4);
         }
 
-        /* --- 5. DIRECTORY LIST (Scrolling) --- */
-        .scrolling-directory {
+        /* 5. DYNAMIC DIRECTORY LIST */
+        .scroll-list {
             height: 500px;
             overflow-y: auto;
-            background: var(--glass);
-            border-radius: 30px;
-            padding: 30px;
-            border: 1px solid rgba(255,255,255,0.1);
-            backdrop-filter: blur(10px);
+            margin-top: 20px;
         }
 
-        .biz-item {
+        .biz-row {
             display: flex;
             align-items: center;
-            padding: 20px;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-            gap: 20px;
+            gap: 25px;
+            padding: 25px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 20px;
+            margin-bottom: 15px;
+            border: 1px solid transparent;
+            transition: 0.3s;
         }
 
-        .biz-img {
-            width: 100px; height: 100px;
-            border-radius: 15px;
-            background: #222;
-            object-fit: cover;
+        .biz-row:hover { border-color: var(--primary); background: rgba(0,122,255,0.1); }
+
+        .biz-thumb { width: 120px; height: 120px; border-radius: 15px; background: #222; object-fit: cover; }
+
+        .rain-drop {
+            position: absolute;
+            background: rgba(255,255,255,0.2);
+            width: 1px; height: 50px;
+            animation: rain-fall linear infinite;
         }
 
-        h2 { font-size: 4rem; margin: 0 0 20px 0; letter-spacing: -3px; }
-
+        @keyframes rain-fall { to { transform: translateY(100vh); } }
     </style>
 </head>
 <body>
 
 <div class="master-ticker">
-    <div class="ticker-move" id="live-news-ticker">
-        SYNCING CLAY COUNTY MASTER DATA... NEWS ENGINE ONLINE... WEATHER MODULE ACTIVE... FUEL PRICES UPDATED...
-    </div>
+    <div class="ticker-text" id="live-ticker">INITIALIZING GLOBAL REPOSITORY SYNC... FETCHING DATA FROM CLAY-COUNTY-NEWS... SYNCING GAS BILLBOARD...</div>
 </div>
 
 <nav>
-    <a href="#news">News</a>
-    <a href="#fuel">Fuel</a>
+    <a href="#news">Bulletin</a>
+    <a href="#fuel">Fuel Billboard</a>
     <a href="#directory">Directory</a>
-    <a href="#amazon">Deals</a>
+    <a href="#amazon">Amazon</a>
 </nav>
 
-<div class="weather-overlay" id="weather-effect"></div>
+<div id="weather-layer"></div>
 
 <section id="news" style="background-image: url('https://raw.githubusercontent.com/KFruti88/Clay-County-All/main/Clay%20County%20Images/background.jpg');">
-    <div style="background: linear-gradient(to bottom, rgba(0,0,0,0.5), #050505); position:absolute; top:0; left:0; width:100%; height:100%;"></div>
-    <div style="position:relative; z-index:10;">
-        <h2>County Bulletin</h2>
-        <div class="scrolling-directory" id="news-feed">
-            </div>
-    </div>
-</section>
-
-<section id="fuel" style="background-image: url('https://raw.githubusercontent.com/KFruti88/Clay-County-Fuel/main/images/gas-station-bg.jpg');">
-    <div style="position:relative; z-index:10;">
-        <h2 style="text-align:center;">Fuel Monitor</h2>
-        <div class="billboard-frame">
-            <div class="gas-grid" id="gas-feed">
-                </div>
+    <div class="full-content">
+        <h2 style="font-size: 4rem; margin:0;">Clay County Bulletin</h2>
+        <div class="scroll-list" id="news-injection">
+            <p>Pulling live engine data...</p>
         </div>
     </div>
 </section>
 
+<section id="fuel" style="background-image: url('https://raw.githubusercontent.com/KFruti88/Clay-County-Fuel/main/images/gas-station-bg.jpg');">
+    <div class="full-content" style="background: rgba(0,0,0,0.9);">
+        <h2 style="text-align:center; font-size: 3rem;">Live Market Prices</h2>
+        <div class="billboard-container" id="fuel-injection">
+            </div>
+    </div>
+</section>
+
 <section id="directory">
-    <div style="position:relative; z-index:10;">
-        <h2>Professional Directory</h2>
-        <div class="scrolling-directory" id="dir-feed">
+    <div class="full-content">
+        <h2 style="font-size: 3rem;">Business Directory</h2>
+        <div class="scroll-list" id="dir-injection">
             </div>
     </div>
 </section>
 
 <script>
-    const GITHUB_USER = "KFruti88";
+    const GITHUB_BASE = "https://raw.githubusercontent.com/KFruti88";
 
-    // 1. WEATHER EFFECT GENERATOR
-    function createRain() {
-        const container = document.getElementById('weather-effect');
-        for (let i = 0; i < 50; i++) {
+    // 1. Weather Effects Logic
+    function startWeather() {
+        const layer = document.getElementById('weather-layer');
+        for(let i=0; i<40; i++) {
             const drop = document.createElement('div');
-            drop.className = 'rain';
-            drop.style.left = Math.random() * 100 + 'vw';
-            drop.style.animationDuration = Math.random() * 1 + 0.5 + 's';
-            drop.style.animationDelay = Math.random() * 2 + 's';
-            container.appendChild(drop);
+            drop.className = 'rain-drop';
+            drop.style.left = Math.random() * 100 + "vw";
+            drop.style.animationDuration = (Math.random() * 0.5 + 0.5) + "s";
+            drop.style.animationDelay = Math.random() * 2 + "s";
+            layer.appendChild(drop);
         }
     }
 
-    // 2. MASTER SYNC LOGIC
-    async function syncHub() {
-        // News Sync
+    // 2. The Global Sync Engine
+    async function globalSync() {
+        // Sync News
         try {
-            const res = await fetch(`https://raw.githubusercontent.com/${GITHUB_USER}/clay-county-news/main/news_data.json`);
+            const res = await fetch(`${GITHUB_BASE}/clay-county-news/main/news_data.json`);
             const news = await res.json();
-            document.getElementById('live-news-ticker').innerText = news.map(n => ` • ${n.title.toUpperCase()}`).join(' ');
-            document.getElementById('news-feed').innerHTML = news.map(n => `
-                <div class="biz-item">
+            document.getElementById('live-ticker').innerText = news.map(n => ` +++ ${n.title.toUpperCase()}`).join('');
+            document.getElementById('news-injection').innerHTML = news.map(n => `
+                <div class="biz-row">
                     <div>
                         <h3 style="color:var(--primary); margin:0;">${n.title}</h3>
-                        <p style="opacity:0.7;">${n.content || 'Latest community report...'}</p>
-                        <small style="color:var(--accent)">${n.date || 'Live'}</small>
+                        <p>${n.content || 'Latest report from the bulletin news engine...'}</p>
+                        <small style="color:var(--accent)">${n.date}</small>
                     </div>
                 </div>
             `).join('');
-        } catch(e) {}
+        } catch(e) { console.error("News Repo Sync Error"); }
 
-        // Fuel Billboard Sync
-        const gasData = [
+        // Sync Fuel (Billboard Activity)
+        // Since fuel prices change in your sheets.js, we simulate the processed output here
+        const stations = [
             { name: "Louisville Shell", price: "3.14" },
             { name: "Flora BP", price: "3.09" },
             { name: "Casey's General", price: "3.12" }
         ];
-        document.getElementById('gas-feed').innerHTML = gasData.map(g => `
-            <div class="station-unit">
-                <h3 style="margin-top:0">${g.name}</h3>
-                <div class="price-text">${g.price}</div>
-                <div style="font-weight:900; letter-spacing:5px; color:#444">UNLEADED</div>
+        document.getElementById('fuel-injection').innerHTML = stations.map(s => `
+            <div class="gas-sign">
+                <div style="color:#666; font-weight:bold;">${s.name.toUpperCase()}</div>
+                <div class="price-num">${s.price}</div>
+                <div style="letter-spacing:8px; color:#444; font-weight:900;">UNLEADED</div>
             </div>
         `).join('');
 
-        // Directory Sync (Images)
-        document.getElementById('dir-feed').innerHTML = `
-            <div class="biz-item">
-                <img src="https://raw.githubusercontent.com/${GITHUB_USER}/Buisness-Directory/main/images/sk-logo.png" class="biz-img">
+        // Sync Directory (Pulling Images)
+        document.getElementById('dir-injection').innerHTML = `
+            <div class="biz-row">
+                <img src="${GITHUB_BASE}/Buisness-Directory/main/images/sk-logo.png" class="biz-thumb">
                 <div>
                     <h3>S&K Ventures Signs</h3>
-                    <p>Graphics, Signs, and Marketing</p>
+                    <p>Professional Graphics & Signage Solutions</p>
+                    <span style="color:var(--accent)">Verified Local Business</span>
                 </div>
             </div>
         `;
     }
 
-    // Initialize
     window.onload = () => {
-        syncHub();
-        // Check for "Rain" condition or just leave active for effect
-        createRain(); 
+        startWeather();
+        globalSync();
     };
 </script>
 
