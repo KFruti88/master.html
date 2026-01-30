@@ -2,8 +2,7 @@
     const townColors = {
         "Flora": { bg: "#0c0b82", text: "#fe4f00" },          // Deep Blue / Orange
         "Louisville": { bg: "#010101", text: "#eb1c24" },     // Black / Cardinal Red
-        "North Clay": { bg: "#010101", text: "#eb1c24" },     // Black / Cardinal Red
-        "Clay City": { bg: "#0c30f0", text: "#8a8a88" },      // Blue / Grey
+        "Clay City": { bg: "#8a8a88", text: "#0c30f0" },      // Grey / Blue
         "Xenia": { bg: "#000000", text: "#fdb813" },          // Black / School Bus Yellow
         "Sailor Springs": { bg: "#000000", text: "#a020f0" }, // Black / Purple
         "Clay County": { bg: "#333333", text: "#ffffff" }     // Charcoal / White
